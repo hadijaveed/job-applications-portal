@@ -1,9 +1,10 @@
+
 import $ from 'jquery';
+import Ractive from 'ractive';
+
 import getFakeJson from './utils/fake-json';
-import tplService from './services/template_service';
 import './styles/index.less';
 
-import tt from './templates/test.html';
 
 $(window).on('scroll', () => {
 
@@ -21,4 +22,8 @@ $(window).on('scroll', () => {
         sideBarEl.css({ position: 'static' });
     }
 
+});
+
+const jobComponent = new Ractive({
+    el: ''
 });
