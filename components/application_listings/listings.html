@@ -1,0 +1,54 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Applications</h3>
+    </div>
+
+    {{#each applications}}
+        <div class="job-application">
+            <a role="button">{{position}}</a>
+            <p>{{name}}</p>
+            <p class="applied-at">
+                <strong>Applied: </strong>{{applied}} ago
+            </p>
+
+            <div class="grid no-gutters">
+                <p class="info">
+                    <strong>Experience: </strong> {{experience}} years
+                </p>
+
+                <div class="availability">
+                    <p><strong>Availability :</strong></p>
+                    <div class="day-tags">
+                        <div class="grid">
+                            {{#each availableOnDays}}
+                                <div class="tag">{{this}}</div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="grid">
+                    <i
+                        class="fa fa-heart-o"
+                        title="Favourite"
+                        data-id="{{id}}"
+                        data-action="favouriteApllication"
+                        on-click="applicationEvent"
+                    >
+                    </i>
+                    <i
+                        class="fa fa-bookmark-o"
+                        title="Favourite"
+                        data-action="bookamrkApplication"
+                        data-id="{{id}}"
+                        on-click="applicationEvent"
+                    >
+                    </i>
+                </div>
+            </div>
+        </div>
+    {{/each}}
+
+</div>

@@ -464,29 +464,130 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
+module.exports = "<navBar />\n<div class=\"container listings\">\n    <div class=\"grid relaxed-gutters\">\n        <div class=\"desktop-three hidden-tablet hidden-phone\">\n            <sidebar />\n        </div>\n\n        <div class=\"desktop-nine tablet-twelve phone-twelve\">\n            <listings\n                applications=\"{{applications}}\"\n                applicationMethods=\"{{methods}}\"\n            />\n        </div>\n    </div>\n</div>\n";
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
-var _jquery = require('jquery');
+/**
+ *
+ * Listings Display Component
+ *
+ */
 
-var _jquery2 = _interopRequireDefault(_jquery);
+var Ractive = require('ractive');
 
-var _ractive = require('ractive');
+module.exports = Ractive.extend({
+    isolated: true,
+    template: require('./listings.html'),
 
-var _ractive2 = _interopRequireDefault(_ractive);
+    bookmarkApplication: function bookmarkApplication(id) {
+        console.log('bookmark application called '.id);
+    },
+    onrender: function onrender() {
+        var self = this;
 
-var _fakeJson = require('./utils/fake-json');
+        self.on({
+            applicationEvent: function applicationEvent(e) {
+                e.original.preventDefault();
+                var id = e.node.getAttribute('data-id'),
+                    action = e.node.getAttribute('data-action'),
+                    _self$get = self.get(),
+                    applicationMethods = _self$get.applicationMethods;
 
-var _fakeJson2 = _interopRequireDefault(_fakeJson);
+
+                switch (action) {
+                    case 'favouriteApllication':
+                        applicationMethods.favouriteApplication(id);
+                        break;
+
+                    case 'bookamrkApplication':
+                        applicationMethods.bookmarkApplication(id);
+                        break;
+
+                    default:
+                        console.log('do nothing here ');
+                }
+            }
+        });
+    }
+});
+
+},{"./listings.html":8,"ractive":115}],8:[function(require,module,exports){
+module.exports = "<div class=\"card\">\n    <div class=\"card-header\">\n        <h3>Applications</h3>\n    </div>\n\n    {{#each applications}}\n        <div class=\"job-application\">\n            <a role=\"button\">{{position}}</a>\n            <p>{{name}}</p>\n            <p class=\"applied-at\">\n                <strong>Applied: </strong>{{applied}} ago\n            </p>\n\n            <div class=\"grid no-gutters\">\n                <p class=\"info\">\n                    <strong>Experience: </strong> {{experience}} years\n                </p>\n\n                <div class=\"availability\">\n                    <p><strong>Availability :</strong></p>\n                    <div class=\"day-tags\">\n                        <div class=\"grid\">\n                            {{#each availableOnDays}}\n                                <div class=\"tag\">{{this}}</div>\n                            {{/each}}\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"controls\">\n                <div class=\"grid\">\n                    <i\n                        class=\"fa fa-heart-o\"\n                        title=\"Favourite\"\n                        data-id=\"{{id}}\"\n                        data-action=\"favouriteApllication\"\n                        on-click=\"applicationEvent\"\n                    >\n                    </i>\n                    <i\n                        class=\"fa fa-bookmark-o\"\n                        title=\"Favourite\"\n                        data-action=\"bookamrkApplication\"\n                        data-id=\"{{id}}\"\n                        on-click=\"applicationEvent\"\n                    >\n                    </i>\n                </div>\n            </div>\n        </div>\n    {{/each}}\n\n</div>\n";
+
+},{}],9:[function(require,module,exports){
+'use strict';
+
+/**
+ *
+ * Filter SIdebar COmponet
+ *
+ */
+
+var Ractive = require('ractive');
+
+module.exports = Ractive.extend({
+    isolated: true,
+    template: require('./sidebar.html'),
+
+    onrender: function onrender() {
+
+        this.on({
+            changeLink: function changeLink(e) {}
+        });
+    }
+});
+
+},{"./sidebar.html":10,"ractive":115}],10:[function(require,module,exports){
+module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Filter</h3>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Position</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">Software Developer</option>\n                <option value=\"\">Engineer</option>\n                <option value=\"\">Cook</option>\n            </select>\n        </div>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Availability</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">Monday</option>\n                <option value=\"\">Tuesday</option>\n                <option value=\"\">Wednesday</option>\n                <option value=\"\">Thursday</option>\n                <option value=\"\">Friday</option>\n                <option value=\"\">Saturday</option>\n                <option value=\"\">Sunday</option>\n            </select>\n        </div>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Experience</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">1 Year</option>\n                <option value=\"\">2 Years</option>\n                <option value=\"\">3 Years</option>\n                <option value=\"\">4 Years</option>\n                <option value=\"\">5 Years</option>\n            </select>\n        </div>\n    </div>\n</div>\n";
+
+},{}],11:[function(require,module,exports){
+'use strict';
+
+/**
+ *
+ * Nav bar Component
+ *
+ */
+
+var Ractive = require('ractive');
+
+module.exports = Ractive.extend({
+    isolated: true,
+    template: require('./tpl.html'),
+    data: function data() {
+        return {
+            navLinks: ['Applications', 'Bookmarks', 'Favourites']
+        };
+    },
+    onrender: function onrender() {
+
+        this.on({
+            changeLink: function changeLink(e) {}
+        });
+    }
+});
+
+},{"./tpl.html":12,"ractive":115}],12:[function(require,module,exports){
+module.exports = "<div class=\"nav\">\n    <div class=\"nav-item\">\n        <a href=\"/\" class=\"logo\">\n            jobportal\n        </a>\n    </div>\n\n    {{#each navLinks}}\n        <div class=\"nav-item\">\n            <a href=\"#\" class=\"link\">\n                {{this}}\n            </a>\n        </div>\n    {{/each}}\n</div>\n";
+
+},{}],13:[function(require,module,exports){
+'use strict';
+
+var $ = require('jquery'),
+    Ractive = require('ractive'),
+    ListingFactory = require('./services/listings')(),
+    ListingDataService = require('./services/data-service')(),
+    AdminService = require('./services/admin-services')();
 
 require('./styles/index.less');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+$(window).on('scroll', function () {
 
-(0, _jquery2.default)(window).on('scroll', function () {
-
-    var viewPortScrolled = (0, _jquery2.default)(document).scrollTop(),
-        viewPortWidth = (0, _jquery2.default)(document).width(),
-        sideBarEl = (0, _jquery2.default)('.sidebar'),
+    var viewPortScrolled = $(document).scrollTop(),
+        viewPortWidth = $(document).width(),
+        sideBarEl = $('.sidebar'),
         sideBarParentWidth = sideBarEl.parent().width();
 
     if (!viewPortWidth >= 991) return;
@@ -499,11 +600,49 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-var jobComponent = new _ractive2.default({
-    el: ''
+var jobComponent = new Ractive({
+    el: '[app-main-mount]',
+    template: require('./app.html'),
+    components: {
+        navBar: require('./components/nav'),
+        sidebar: require('./components/filter_sidebar'),
+        listings: require('./components/application_listings')
+    },
+
+    onrender: RenderCtrl
 });
 
-},{"./styles/index.less":128,"./utils/fake-json":129,"jquery":44,"ractive":108}],7:[function(require,module,exports){
+function RenderCtrl() {
+    var self = this;
+
+    // get all applications on render
+    ListingFactory.getAllApplications().then(function (data) {
+        self.set('applications', ListingDataService.mapAvailabilityDays(data));
+    }).catch(function (err) {
+        console.log('see error on render ', err);
+    });
+
+    self.set({
+        methods: {
+            bookmarkApplication: function bookmarkApplication(id) {
+                AdminService.setBookmark(id).then(function (bookamrks) {
+                    console.log('see bookmarks ', bookamrks);
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            favouriteApplication: function favouriteApplication(id) {
+                AdminService.setFavourite(id).then(function (favourites) {
+                    console.log('see favourites ', favourites);
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            }
+        }
+    });
+}
+
+},{"./app.html":6,"./components/application_listings":7,"./components/filter_sidebar":9,"./components/nav":11,"./services/admin-services":135,"./services/data-service":136,"./services/listings":137,"./styles/index.less":138,"jquery":51,"ractive":115}],14:[function(require,module,exports){
 (function (process,__filename){
 /** vim: et:ts=4:sw=4:sts=4
  * @license amdefine 1.0.1 Copyright (c) 2011-2016, The Dojo Foundation All Rights Reserved.
@@ -808,7 +947,7 @@ function amdefine(module, requireFn) {
 module.exports = amdefine;
 
 }).call(this,require('_process'),"/node_modules/amdefine/amdefine.js")
-},{"_process":5,"path":4}],8:[function(require,module,exports){
+},{"_process":5,"path":4}],15:[function(require,module,exports){
 module.exports = function (css, customDocument) {
   var doc = customDocument || document;
   if (doc.createStyleSheet) {
@@ -847,7 +986,7 @@ module.exports.byUrl = function(url) {
   }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Handlebars = require('handlebars');
 var fecha = require('fecha');
 var numbro = require('numbro');
@@ -891,7 +1030,7 @@ var dummyjson = {
 
 module.exports = dummyjson;
 
-},{"./lib/helpers":10,"./lib/mockdata":11,"./lib/utils":12,"fecha":13,"handlebars":43,"numbro":107}],10:[function(require,module,exports){
+},{"./lib/helpers":17,"./lib/mockdata":18,"./lib/utils":19,"fecha":20,"handlebars":50,"numbro":114}],17:[function(require,module,exports){
 var os = require('os');
 var Handlebars = require('handlebars');
 var numbro = require('numbro');
@@ -1345,7 +1484,7 @@ var helpers = {
 
 module.exports = helpers;
 
-},{"./utils":12,"fecha":13,"handlebars":43,"numbro":107,"os":3}],11:[function(require,module,exports){
+},{"./utils":19,"fecha":20,"handlebars":50,"numbro":114,"os":3}],18:[function(require,module,exports){
 var titles = [
   'Mr', 'Mrs', 'Dr', 'Prof', 'Lord', 'Lady', 'Sir', 'Madam'
 ];
@@ -1556,7 +1695,7 @@ module.exports = {
   lorem: lorem
 };
 
-},{}],12:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var seedrandom = require('seedrandom');
 
 // Create an instance of the prng without a seed (so it'll be a random sequence every time)
@@ -1602,7 +1741,7 @@ var utils = {
 
 module.exports = utils;
 
-},{"seedrandom":109}],13:[function(require,module,exports){
+},{"seedrandom":116}],20:[function(require,module,exports){
 (function (main) {
   'use strict';
 
@@ -1872,7 +2011,7 @@ module.exports = utils;
   }
 })(this);
 
-},{}],14:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -1939,7 +2078,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars.runtime":15,"./handlebars/compiler/ast":17,"./handlebars/compiler/base":18,"./handlebars/compiler/compiler":20,"./handlebars/compiler/javascript-compiler":22,"./handlebars/compiler/visitor":25,"./handlebars/no-conflict":39}],15:[function(require,module,exports){
+},{"./handlebars.runtime":22,"./handlebars/compiler/ast":24,"./handlebars/compiler/base":25,"./handlebars/compiler/compiler":27,"./handlebars/compiler/javascript-compiler":29,"./handlebars/compiler/visitor":32,"./handlebars/no-conflict":46}],22:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2007,7 +2146,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":16,"./handlebars/exception":29,"./handlebars/no-conflict":39,"./handlebars/runtime":40,"./handlebars/safe-string":41,"./handlebars/utils":42}],16:[function(require,module,exports){
+},{"./handlebars/base":23,"./handlebars/exception":36,"./handlebars/no-conflict":46,"./handlebars/runtime":47,"./handlebars/safe-string":48,"./handlebars/utils":49}],23:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2113,7 +2252,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":27,"./exception":29,"./helpers":30,"./logger":38,"./utils":42}],17:[function(require,module,exports){
+},{"./decorators":34,"./exception":36,"./helpers":37,"./logger":45,"./utils":49}],24:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2146,7 +2285,7 @@ exports['default'] = AST;
 module.exports = exports['default'];
 
 
-},{}],18:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2196,7 +2335,7 @@ function parse(input, options) {
 }
 
 
-},{"../utils":42,"./helpers":21,"./parser":23,"./whitespace-control":26}],19:[function(require,module,exports){
+},{"../utils":49,"./helpers":28,"./parser":30,"./whitespace-control":33}],26:[function(require,module,exports){
 /* global define */
 'use strict';
 
@@ -2364,7 +2503,7 @@ exports['default'] = CodeGen;
 module.exports = exports['default'];
 
 
-},{"../utils":42,"source-map":117}],20:[function(require,module,exports){
+},{"../utils":49,"source-map":124}],27:[function(require,module,exports){
 /* eslint-disable new-cap */
 
 'use strict';
@@ -2939,7 +3078,7 @@ function transformLiteralToPath(sexpr) {
 }
 
 
-},{"../exception":29,"../utils":42,"./ast":17}],21:[function(require,module,exports){
+},{"../exception":36,"../utils":49,"./ast":24}],28:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3171,7 +3310,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 }
 
 
-},{"../exception":29}],22:[function(require,module,exports){
+},{"../exception":36}],29:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4301,7 +4440,7 @@ exports['default'] = JavaScriptCompiler;
 module.exports = exports['default'];
 
 
-},{"../base":16,"../exception":29,"../utils":42,"./code-gen":19}],23:[function(require,module,exports){
+},{"../base":23,"../exception":36,"../utils":49,"./code-gen":26}],30:[function(require,module,exports){
 // File ignored in coverage tests via setting in .istanbul.yml
 /* Jison generated parser */
 "use strict";
@@ -5042,7 +5181,7 @@ var handlebars = (function () {
 module.exports = exports["default"];
 
 
-},{}],24:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /* eslint-disable new-cap */
 'use strict';
 
@@ -5230,7 +5369,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 /* eslint-enable new-cap */
 
 
-},{"./visitor":25}],25:[function(require,module,exports){
+},{"./visitor":32}],32:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5372,7 +5511,7 @@ exports['default'] = Visitor;
 module.exports = exports['default'];
 
 
-},{"../exception":29}],26:[function(require,module,exports){
+},{"../exception":36}],33:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5595,7 +5734,7 @@ exports['default'] = WhitespaceControl;
 module.exports = exports['default'];
 
 
-},{"./visitor":25}],27:[function(require,module,exports){
+},{"./visitor":32}],34:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5613,7 +5752,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":28}],28:[function(require,module,exports){
+},{"./decorators/inline":35}],35:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5644,7 +5783,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":42}],29:[function(require,module,exports){
+},{"../utils":49}],36:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5700,7 +5839,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],30:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5748,7 +5887,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":31,"./helpers/each":32,"./helpers/helper-missing":33,"./helpers/if":34,"./helpers/log":35,"./helpers/lookup":36,"./helpers/with":37}],31:[function(require,module,exports){
+},{"./helpers/block-helper-missing":38,"./helpers/each":39,"./helpers/helper-missing":40,"./helpers/if":41,"./helpers/log":42,"./helpers/lookup":43,"./helpers/with":44}],38:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5789,7 +5928,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":42}],32:[function(require,module,exports){
+},{"../utils":49}],39:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5885,7 +6024,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":29,"../utils":42}],33:[function(require,module,exports){
+},{"../exception":36,"../utils":49}],40:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5912,7 +6051,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":29}],34:[function(require,module,exports){
+},{"../exception":36}],41:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5943,7 +6082,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":42}],35:[function(require,module,exports){
+},{"../utils":49}],42:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5971,7 +6110,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],36:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5985,7 +6124,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],37:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6020,7 +6159,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":42}],38:[function(require,module,exports){
+},{"../utils":49}],45:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6069,7 +6208,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{"./utils":42}],39:[function(require,module,exports){
+},{"./utils":49}],46:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -6093,7 +6232,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],40:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6402,7 +6541,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":16,"./exception":29,"./utils":42}],41:[function(require,module,exports){
+},{"./base":23,"./exception":36,"./utils":49}],48:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -6419,7 +6558,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],42:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6545,7 +6684,7 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],43:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 /* eslint-disable no-var */
@@ -6572,7 +6711,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions['.hbs'] = extension;
 }
 
-},{"../dist/cjs/handlebars":14,"../dist/cjs/handlebars/compiler/printer":24,"fs":2}],44:[function(require,module,exports){
+},{"../dist/cjs/handlebars":21,"../dist/cjs/handlebars/compiler/printer":31,"fs":2}],51:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -16827,10 +16966,10 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],45:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = require('cssify');
 
-},{"cssify":8}],46:[function(require,module,exports){
+},{"cssify":15}],53:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Bulgarian
@@ -16870,7 +17009,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],47:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Czech
@@ -16922,7 +17061,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],48:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Danish
@@ -16973,7 +17112,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],49:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17014,7 +17153,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],50:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17065,7 +17204,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],51:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17119,7 +17258,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],52:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17170,7 +17309,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],53:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Greek (el)
@@ -17210,7 +17349,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],54:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17265,7 +17404,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],55:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17320,7 +17459,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],56:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*!
 + * numbro.js language configuration
  * language : English
@@ -17365,7 +17504,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],57:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17420,7 +17559,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],58:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17475,7 +17614,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],59:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17531,7 +17670,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],60:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17587,7 +17726,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],61:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17643,7 +17782,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],62:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17699,7 +17838,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],63:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17755,7 +17894,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],64:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17811,7 +17950,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],65:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17867,7 +18006,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],66:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17923,7 +18062,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],67:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17979,7 +18118,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],68:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Estonian
@@ -18033,7 +18172,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],69:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Farsi
@@ -18074,7 +18213,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],70:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Finnish
@@ -18125,7 +18264,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],71:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Filipino (Pilipino)
@@ -18170,7 +18309,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],72:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -18222,7 +18361,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],73:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -18273,7 +18412,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],74:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -18324,7 +18463,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],75:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Hebrew
@@ -18373,7 +18512,7 @@ module.exports = require('cssify');
 }.call(typeof window === 'undefined' ? this : window));
 
 
-},{}],76:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Hungarian
@@ -18424,7 +18563,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],77:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Indonesian
@@ -18464,7 +18603,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],78:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /* jshint sub: true */
 exports['bg'] = require('./bg.js');
 exports['cs-CZ'] = require('./cs-CZ.js');
@@ -18526,7 +18665,7 @@ exports['zh-CN'] = require('./zh-CN.js');
 exports['zh-MO'] = require('./zh-MO.js');
 exports['zh-SG'] = require('./zh-SG.js');
 exports['zh-TW'] = require('./zh-TW.js');
-},{"./bg.js":46,"./cs-CZ.js":47,"./da-DK.js":48,"./de-AT.js":49,"./de-CH.js":50,"./de-DE.js":51,"./de-LI.js":52,"./el.js":53,"./en-AU.js":54,"./en-GB.js":55,"./en-IE.js":56,"./en-NZ.js":57,"./en-ZA.js":58,"./es-AR.js":59,"./es-CL.js":60,"./es-CO.js":61,"./es-CR.js":62,"./es-ES.js":63,"./es-NI.js":64,"./es-PE.js":65,"./es-PR.js":66,"./es-SV.js":67,"./et-EE.js":68,"./fa-IR.js":69,"./fi-FI.js":70,"./fil-PH.js":71,"./fr-CA.js":72,"./fr-CH.js":73,"./fr-FR.js":74,"./he-IL.js":75,"./hu-HU.js":76,"./id.js":77,"./it-CH.js":79,"./it-IT.js":80,"./ja-JP.js":81,"./ko-KR.js":82,"./lv-LV.js":83,"./nb-NO.js":84,"./nb.js":85,"./nl-BE.js":86,"./nl-NL.js":87,"./nn.js":88,"./pl-PL.js":89,"./pt-BR.js":90,"./pt-PT.js":91,"./ro-RO.js":92,"./ro.js":93,"./ru-RU.js":94,"./ru-UA.js":95,"./sk-SK.js":96,"./sl.js":97,"./sr-Cyrl-RS.js":98,"./sv-SE.js":99,"./th-TH.js":100,"./tr-TR.js":101,"./uk-UA.js":102,"./zh-CN.js":103,"./zh-MO.js":104,"./zh-SG.js":105,"./zh-TW.js":106}],79:[function(require,module,exports){
+},{"./bg.js":53,"./cs-CZ.js":54,"./da-DK.js":55,"./de-AT.js":56,"./de-CH.js":57,"./de-DE.js":58,"./de-LI.js":59,"./el.js":60,"./en-AU.js":61,"./en-GB.js":62,"./en-IE.js":63,"./en-NZ.js":64,"./en-ZA.js":65,"./es-AR.js":66,"./es-CL.js":67,"./es-CO.js":68,"./es-CR.js":69,"./es-ES.js":70,"./es-NI.js":71,"./es-PE.js":72,"./es-PR.js":73,"./es-SV.js":74,"./et-EE.js":75,"./fa-IR.js":76,"./fi-FI.js":77,"./fil-PH.js":78,"./fr-CA.js":79,"./fr-CH.js":80,"./fr-FR.js":81,"./he-IL.js":82,"./hu-HU.js":83,"./id.js":84,"./it-CH.js":86,"./it-IT.js":87,"./ja-JP.js":88,"./ko-KR.js":89,"./lv-LV.js":90,"./nb-NO.js":91,"./nb.js":92,"./nl-BE.js":93,"./nl-NL.js":94,"./nn.js":95,"./pl-PL.js":96,"./pt-BR.js":97,"./pt-PT.js":98,"./ro-RO.js":99,"./ro.js":100,"./ru-RU.js":101,"./ru-UA.js":102,"./sk-SK.js":103,"./sl.js":104,"./sr-Cyrl-RS.js":105,"./sv-SE.js":106,"./th-TH.js":107,"./tr-TR.js":108,"./uk-UA.js":109,"./zh-CN.js":110,"./zh-MO.js":111,"./zh-SG.js":112,"./zh-TW.js":113}],86:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Italian
@@ -18567,7 +18706,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],80:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Italian
@@ -18618,7 +18757,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],81:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Japanese
@@ -18669,7 +18808,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],82:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Korean
@@ -18710,7 +18849,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],83:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Latvian
@@ -18760,7 +18899,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],84:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language: Norwegian Bokmål
@@ -18808,7 +18947,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],85:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Norwegian Bokmål (nb)
@@ -18848,7 +18987,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],86:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Dutch
@@ -18900,7 +19039,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],87:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Dutch
@@ -18952,7 +19091,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],88:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Norwegian Nynorsk (nn)
@@ -18992,7 +19131,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],89:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Polish
@@ -19043,7 +19182,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],90:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Portuguese
@@ -19094,7 +19233,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],91:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Portuguese
@@ -19145,7 +19284,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],92:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /*!
  * numeral.js language configuration
  * language : Romanian
@@ -19195,7 +19334,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],93:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Romanian (ro)
@@ -19235,7 +19374,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],94:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Russian
@@ -19289,7 +19428,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],95:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Russian
@@ -19343,7 +19482,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],96:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Slovak
@@ -19395,7 +19534,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],97:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Slovene
@@ -19436,7 +19575,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],98:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Serbian (sr)
@@ -19477,7 +19616,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],99:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Swedish
@@ -19525,7 +19664,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],100:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Thai
@@ -19576,7 +19715,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],101:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Turkish
@@ -19662,7 +19801,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],102:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Ukrainian
@@ -19716,7 +19855,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],103:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : simplified chinese
@@ -19767,7 +19906,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],104:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese traditional
@@ -19808,7 +19947,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],105:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese simplified
@@ -19849,7 +19988,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],106:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese (Taiwan)
@@ -19890,7 +20029,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],107:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 (function (process){
 /*!
  * numbro.js
@@ -21187,7 +21326,7 @@ exports['zh-TW'] = require('./zh-TW.js');
 }.call(typeof window === 'undefined' ? this : window));
 
 }).call(this,require('_process'))
-},{"./languages":78,"_process":5}],108:[function(require,module,exports){
+},{"./languages":85,"_process":5}],115:[function(require,module,exports){
 (function (global){
 /*
 	Ractive.js v0.9.2
@@ -37624,7 +37763,7 @@ return Ractive;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],109:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 // A library of seedable RNGs implemented in Javascript.
 //
 // Usage:
@@ -37686,7 +37825,7 @@ sr.tychei = tychei;
 
 module.exports = sr;
 
-},{"./lib/alea":110,"./lib/tychei":111,"./lib/xor128":112,"./lib/xor4096":113,"./lib/xorshift7":114,"./lib/xorwow":115,"./seedrandom":116}],110:[function(require,module,exports){
+},{"./lib/alea":117,"./lib/tychei":118,"./lib/xor128":119,"./lib/xor4096":120,"./lib/xorshift7":121,"./lib/xorwow":122,"./seedrandom":123}],117:[function(require,module,exports){
 // A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
 // http://baagoe.com/en/RandomMusings/javascript/
 // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
@@ -37802,7 +37941,7 @@ if (module && module.exports) {
 
 
 
-},{}],111:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 // A Javascript implementaion of the "Tyche-i" prng algorithm by
 // Samuel Neves and Filipe Araujo.
 // See https://eden.dei.uc.pt/~sneves/pubs/2011-snfa2.pdf
@@ -37907,7 +38046,7 @@ if (module && module.exports) {
 
 
 
-},{}],112:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 // A Javascript implementaion of the "xor128" prng algorithm by
 // George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
 
@@ -37990,7 +38129,7 @@ if (module && module.exports) {
 
 
 
-},{}],113:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 // A Javascript implementaion of Richard Brent's Xorgens xor4096 algorithm.
 //
 // This fast non-cryptographic random number generator is designed for
@@ -38138,7 +38277,7 @@ if (module && module.exports) {
   (typeof define) == 'function' && define   // present with an AMD loader
 );
 
-},{}],114:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 // A Javascript implementaion of the "xorshift7" algorithm by
 // François Panneton and Pierre L'ecuyer:
 // "On the Xorgshift Random Number Generators"
@@ -38237,7 +38376,7 @@ if (module && module.exports) {
 );
 
 
-},{}],115:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 // A Javascript implementaion of the "xorwow" prng algorithm by
 // George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
 
@@ -38325,7 +38464,7 @@ if (module && module.exports) {
 
 
 
-},{}],116:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 /*
 Copyright 2014 David Bau.
 
@@ -38574,7 +38713,7 @@ if ((typeof module) == 'object' && module.exports) {
   Math    // math: package containing random, pow, and seedrandom
 );
 
-},{"crypto":1}],117:[function(require,module,exports){
+},{"crypto":1}],124:[function(require,module,exports){
 /*
  * Copyright 2009-2011 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.txt or:
@@ -38584,7 +38723,7 @@ exports.SourceMapGenerator = require('./source-map/source-map-generator').Source
 exports.SourceMapConsumer = require('./source-map/source-map-consumer').SourceMapConsumer;
 exports.SourceNode = require('./source-map/source-node').SourceNode;
 
-},{"./source-map/source-map-consumer":124,"./source-map/source-map-generator":125,"./source-map/source-node":126}],118:[function(require,module,exports){
+},{"./source-map/source-map-consumer":131,"./source-map/source-map-generator":132,"./source-map/source-node":133}],125:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -38693,7 +38832,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":127,"amdefine":7}],119:[function(require,module,exports){
+},{"./util":134,"amdefine":14}],126:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -38841,7 +38980,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./base64":120,"amdefine":7}],120:[function(require,module,exports){
+},{"./base64":127,"amdefine":14}],127:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -38916,7 +39055,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":7}],121:[function(require,module,exports){
+},{"amdefine":14}],128:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39035,7 +39174,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":7}],122:[function(require,module,exports){
+},{"amdefine":14}],129:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2014 Mozilla Foundation and contributors
@@ -39123,7 +39262,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":127,"amdefine":7}],123:[function(require,module,exports){
+},{"./util":134,"amdefine":14}],130:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39245,7 +39384,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":7}],124:[function(require,module,exports){
+},{"amdefine":14}],131:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -40324,7 +40463,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":118,"./base64-vlq":119,"./binary-search":121,"./quick-sort":123,"./util":127,"amdefine":7}],125:[function(require,module,exports){
+},{"./array-set":125,"./base64-vlq":126,"./binary-search":128,"./quick-sort":130,"./util":134,"amdefine":14}],132:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -40725,7 +40864,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":118,"./base64-vlq":119,"./mapping-list":122,"./util":127,"amdefine":7}],126:[function(require,module,exports){
+},{"./array-set":125,"./base64-vlq":126,"./mapping-list":129,"./util":134,"amdefine":14}],133:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -41141,7 +41280,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./source-map-generator":125,"./util":127,"amdefine":7}],127:[function(require,module,exports){
+},{"./source-map-generator":132,"./util":134,"amdefine":14}],134:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -41513,28 +41652,225 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":7}],128:[function(require,module,exports){
-var css = "* {\n  box-sizing: border-box;\n}\n.grid {\n  display: flex;\n  flex-flow: row wrap;\n  justify-content: inherit;\n  align-items: flex-start;\n  width: 100% !important;\n  padding: 0;\n}\n[class*='desktop-'],\n[class*='tablet-'],\n[class*='phone-'] {\n  margin: 0 0.5% 10px 0.5%;\n}\n.no-gutters [class*='desktop-'],\n.no-gutters [class*='tablet-'],\n.no-gutters [class*='phone-'] {\n  margin: 0 0 10px 0;\n}\n.relaxed-gutters [class*='desktop-'],\n.relaxed-gutters [class*='tablet-'],\n.relaxed-gutters [class*='phone-'] {\n  margin: 0 1% 10px 1%;\n}\n@media (min-width: 991px) {\n  .hidden-desktop {\n    display: none;\n  }\n  .desktop-one {\n    flex-basis: 7.33333333%;\n  }\n  .desktop-two {\n    flex-basis: 15.66666667%;\n  }\n  .desktop-three {\n    flex-basis: 24%;\n  }\n  .desktop-four {\n    flex-basis: 32.33333333%;\n  }\n  .desktop-five {\n    flex-basis: 40.66666667%;\n  }\n  .desktop-six {\n    flex-basis: 49%;\n  }\n  .desktop-seven {\n    flex-basis: 57.33333333%;\n  }\n  .desktop-eight {\n    flex-basis: 65.66666667%;\n  }\n  .desktop-nine {\n    flex-basis: 74%;\n  }\n  .desktop-ten {\n    flex-basis: 82.33333333%;\n  }\n  .desktop-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .desktop-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .desktop-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .desktop-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .desktop-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .desktop-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .desktop-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .desktop-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .desktop-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .desktop-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .desktop-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .desktop-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .desktop-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .desktop-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .desktop-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .desktop-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .desktop-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .desktop-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .desktop-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .desktop-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .desktop-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .desktop-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .desktop-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .desktop-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .desktop-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .desktop-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 991px) {\n  .hidden-tablet {\n    display: none;\n  }\n  .tablet-one {\n    flex-basis: 7.33333333%;\n  }\n  .tablet-two {\n    flex-basis: 15.66666667%;\n  }\n  .tablet-three {\n    flex-basis: 24%;\n  }\n  .tablet-four {\n    flex-basis: 32.33333333%;\n  }\n  .tablet-five {\n    flex-basis: 40.66666667%;\n  }\n  .tablet-six {\n    flex-basis: 49%;\n  }\n  .tablet-seven {\n    flex-basis: 57.33333333%;\n  }\n  .tablet-eight {\n    flex-basis: 65.66666667%;\n  }\n  .tablet-nine {\n    flex-basis: 74%;\n  }\n  .tablet-ten {\n    flex-basis: 82.33333333%;\n  }\n  .tablet-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .tablet-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .tablet-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .tablet-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .tablet-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .tablet-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .tablet-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .tablet-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .tablet-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .tablet-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .tablet-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .tablet-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .tablet-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .tablet-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .tablet-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .tablet-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .tablet-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .tablet-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .tablet-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .tablet-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .tablet-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .tablet-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .tablet-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .tablet-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .tablet-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .tablet-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 661px) {\n  .hidden-phone {\n    display: none;\n  }\n  .phone-one {\n    flex-basis: 7.33333333%;\n  }\n  .phone-two {\n    flex-basis: 15.66666667%;\n  }\n  .phone-three {\n    flex-basis: 24%;\n  }\n  .phone-four {\n    flex-basis: 32.33333333%;\n  }\n  .phone-five {\n    flex-basis: 40.66666667%;\n  }\n  .phone-six {\n    flex-basis: 49%;\n  }\n  .phone-seven {\n    flex-basis: 57.33333333%;\n  }\n  .phone-eight {\n    flex-basis: 65.66666667%;\n  }\n  .phone-nine {\n    flex-basis: 74%;\n  }\n  .phone-ten {\n    flex-basis: 82.33333333%;\n  }\n  .phone-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .phone-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .phone-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .phone-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .phone-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .phone-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .phone-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .phone-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .phone-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .phone-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .phone-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .phone-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .phone-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .phone-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .phone-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .phone-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .phone-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .phone-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .phone-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .phone-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .phone-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .phone-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .phone-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .phone-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .phone-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .phone-twelve {\n    flex-basis: 98%;\n  }\n}\n.center {\n  justify-content: center !important;\n}\n.skeleton {\n  height: 25px;\n  width: 80%;\n  background-color: rgba(0, 0, 0, 0.15);\n  display: block;\n  margin: 27px auto;\n}\n.sky-blue {\n  background: #92AFD7;\n}\n.dark-blue {\n  background: #5A7684;\n}\n.nav {\n  position: fixed;\n  display: flex;\n  left: 0;\n  top: 0;\n  width: 100%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  background: #fff;\n  z-index: 1020;\n  padding: 10px 20px 10px 20px;\n}\n.nav .nav-item {\n  padding: 0 10px 0 10px;\n}\n.nav .nav-item .link {\n  line-height: 23px;\n  padding-bottom: 12px;\n  color: #404040;\n  font-size: 14px;\n}\n.nav .nav-item .link:hover {\n  color: #0CAA41;\n  border-bottom: 3px solid #0CAA41;\n}\n.nav .logo {\n  color: #0CAA41;\n  font-size: 1.2rem;\n  font-weight: bold;\n  padding-right: 20px;\n}\n.listings {\n  margin-top: 80px;\n}\n.listings p,\n.listings h2,\n.listings h3,\n.listings h5 {\n  color: #404040;\n}\n.listings h2 {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  font-size: 1.2em;\n}\n.listings .card {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n}\n.listings .card-header {\n  margin-bottom: 16px;\n  border-bottom: 1px solid #DEDEDE;\n}\n.listings .card-header h3 {\n  font-size: 1rem;\n  line-height: 1;\n}\n.listings .job-application {\n  border-bottom: 1px solid #c2c2c2;\n  padding: 10px;\n}\n.listings .job-application:last-child {\n  border-bottom: none;\n}\n.listings .job-application a {\n  color: #1861bf;\n  font-weight: bold;\n}\n.listings .job-application p {\n  line-height: 0;\n}\n.listings .job-application .applied-at {\n  font-size: 0.9em;\n}\n@media (min-width: 991px) {\n  .listings .job-application .applied-at {\n    float: right;\n    margin-top: -41px;\n  }\n}\n@media (max-width: 991px) {\n  .listings .job-application .applied-at {\n    line-height: 1;\n  }\n}\n.listings .job-application .info {\n  font-size: 0.85em;\n  margin-right: 10px;\n}\n.listings .job-application .availability p,\n.listings .job-application .availability .day-tags {\n  font-size: 0.85em;\n  display: inline-block;\n  float: left;\n}\n.listings .job-application .availability .day-tags {\n  margin: 3px 0 0 5px;\n}\n.listings .job-application .availability .day-tags .tag {\n  font-size: 0.65em;\n  padding: 6px;\n  font-weight: bold;\n  margin: 0 5px 0 5px;\n  color: white;\n  background: #0CAA41;\n}\n.listings .job-application .controls {\n  font-size: 1.5rem;\n}\n@media (min-width: 991px) {\n  .listings .job-application .controls {\n    float: right;\n    margin-top: -47px;\n  }\n}\n.listings .job-application .controls i {\n  margin-right: 15px;\n  cursor: pointer;\n  color: #0CAA41;\n}\n.listings .job-application .controls i:last-child {\n  margin-right: 0px;\n}\n.listings .sidebar {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n  min-height: 270px;\n}\n.listings .sidebar .facet {\n  margin: 10px 0 10px 0;\n}\n.listings .sidebar .facet p {\n  font-size: 0.8rem;\n  vertical-align: middle;\n  margin-top: 10px;\n}\n.listings .sidebar .facet .select-box {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n  font-size: 0.8rem;\n  padding: 8px;\n}\nbody {\n  font-family: 'Lato', sans-serif;\n  -webkit-font-smoothing: antialiased;\n  font-size: 16px;\n  background: #F0F0F0;\n}\nbody a {\n  cursor: pointer;\n  text-decoration: none;\n}\n.container {\n  padding: 10px 20px 10px 20px;\n}\n@media (max-width: 991px) {\n  .container {\n    padding: 10px 0 10px 0;\n  }\n}\n.dropdown {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n}\n.headings {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n}\nh1.title {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  text-transform: uppercase;\n  font-size: 1.4em;\n}\n.center {\n  justify-content: center;\n}\n";(require('lessify'))(css); module.exports = css;
-},{"lessify":45}],129:[function(require,module,exports){
+},{"amdefine":14}],135:[function(require,module,exports){
+"use strict";
+
+/**
+ *
+ * THis service is to handle admin requests
+ *
+ */
+
+var adminService = function adminService() {
+
+    var bookmarks = [],
+        favourites = [];
+
+    return {
+        getBookmarks: function getBookmarks() {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    resolve(bookmarks);
+                }, 200);
+            });
+        },
+        getFavourites: function getFavourites() {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    resolve(favourites);
+                }, 200);
+            });
+        },
+        setBookmark: function setBookmark(id) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    if (bookmarks.indexOf(id) === -1) bookmarks.push(id);
+                    resolve(bookmarks);
+                }, 200);
+            });
+        },
+        setFavourite: function setFavourite(id) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    if (favourites.indexOf(id) === -1) favourites.push(id);
+                    resolve(favourites);
+                }, 200);
+            });
+        },
+        removeBookmark: function removeBookmark(id) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    var index = bookmarks.indexOf(id);
+                    if (index !== -1) bookmarks.splice(index, 1);
+                    resolve(bookmarks);
+                }, 200);
+            });
+        },
+        removeFavourite: function removeFavourite(id) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    var index = favourites.indexOf(id);
+                    if (index !== -1) favourites.splice(index, 1);
+                    resolve(favourites);
+                }, 200);
+            });
+        }
+    };
+};
+
+module.exports = adminService;
+
+},{}],136:[function(require,module,exports){
+"use strict";
+
+/**
+ *
+ * This service is to format data
+ *
+ */
+
+var formatListingData = function formatListingData() {
+    return {
+        mapAvailabilityDays: function mapAvailabilityDays(applications) {
+            return applications.map(function (application) {
+                application.availableOnDays = Object.keys(application.availability).filter(function (key) {
+                    return application.availability[key] !== 0;
+                });
+
+                return application;
+            });
+        },
+        mapBookmarkFlags: function mapBookmarkFlags(applications, bookmarks) {
+            return applications.map(function (application) {
+                if (bookmarks.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+                return application;
+            });
+        },
+        mapFavouriteFlags: function mapFavouriteFlags(applications, favourites) {
+            return applications.map(function (application) {
+                if (favourites.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+                return application;
+            });
+        },
+        mapAllData: function mapAllData(applications, favourites, bookmarks) {
+            return applications.map(function (application) {
+                application.availableOnDays = Object.keys(application.availability).filter(function (key) {
+                    return application.availability[key] !== 0;
+                });
+
+                if (bookmarks.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+
+                if (favourites.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+
+                return application;
+            });
+        }
+    };
+};
+
+module.exports = formatListingData;
+
+},{}],137:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
+/**
+ *
+ * Building Job Application Portal to Review Everything
+ *
+ */
 
-var _dummyJson = require('dummy-json');
+var getFakeJson = require('../utils/fake-json'),
+    appData = JSON.parse(getFakeJson());
 
-var _dummyJson2 = _interopRequireDefault(_dummyJson);
+console.log('see json ', JSON.stringify(appData, null, 2));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var errorService = function errorService() {
+    var errorMappings = {
+        4000: {
+            code: 4000,
+            message: 'Cannot map the error'
+        },
+
+        4001: {
+            code: 4001,
+            message: 'Application filter method requires @param criteria as a {string}'
+        },
+
+        4002: {
+            code: 4002,
+            message: 'Application sort method requires @param criteria as a {string}'
+        },
+
+        4003: {
+            code: 4002,
+            message: 'Application getDetail method requires @param id as a {number}'
+        }
+    };
+
+    return {
+        sendError: function sendError(code) {
+            if (errorMappings.hasOwnProperty(code)) return errorMappings[code];
+            return errorMappings['4000'];
+        }
+    };
+};
+
+/**
+ * jobPortalFactory
+ * @return {object} CRUD Methods
+ */
+
+var jobPortalFactory = function jobPortalFactory() {
+    var sendErrorService = errorService().sendError;
+    return {
+        getAllApplications: function getAllApplications() {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    resolve(appData);
+                }, 200);
+            });
+        },
+        filterApplications: function filterApplications(criteria) {
+            return new Promise(function (resolve, reject) {
+                if (typeof criteria !== 'string') return reject({ error: sendErrorService(4001) });
+            });
+        },
+        sortApplications: function sortApplications(criteria) {
+            return new Promise(function (resolve, reject) {
+                if (typeof criteria !== 'string') return reject({ error: sendErrorService(4001) });
+            });
+        },
+        getApplicationDetail: function getApplicationDetail(id) {
+            return new Promise(function (resolve, reject) {
+                if (typeof id !== 'string') return reject({ error: sendErrorService(4001) });
+            });
+        }
+    };
+};
+
+module.exports = jobPortalFactory;
+
+},{"../utils/fake-json":139}],138:[function(require,module,exports){
+var css = "* {\n  box-sizing: border-box;\n}\n.grid {\n  display: flex;\n  flex-flow: row wrap;\n  justify-content: inherit;\n  align-items: flex-start;\n  width: 100% !important;\n  padding: 0;\n}\n[class*='desktop-'],\n[class*='tablet-'],\n[class*='phone-'] {\n  margin: 0 0.5% 10px 0.5%;\n}\n.no-gutters [class*='desktop-'],\n.no-gutters [class*='tablet-'],\n.no-gutters [class*='phone-'] {\n  margin: 0 0 10px 0;\n}\n.relaxed-gutters [class*='desktop-'],\n.relaxed-gutters [class*='tablet-'],\n.relaxed-gutters [class*='phone-'] {\n  margin: 0 1% 10px 1%;\n}\n@media (min-width: 991px) {\n  .hidden-desktop {\n    display: none;\n  }\n  .desktop-one {\n    flex-basis: 7.33333333%;\n  }\n  .desktop-two {\n    flex-basis: 15.66666667%;\n  }\n  .desktop-three {\n    flex-basis: 24%;\n  }\n  .desktop-four {\n    flex-basis: 32.33333333%;\n  }\n  .desktop-five {\n    flex-basis: 40.66666667%;\n  }\n  .desktop-six {\n    flex-basis: 49%;\n  }\n  .desktop-seven {\n    flex-basis: 57.33333333%;\n  }\n  .desktop-eight {\n    flex-basis: 65.66666667%;\n  }\n  .desktop-nine {\n    flex-basis: 74%;\n  }\n  .desktop-ten {\n    flex-basis: 82.33333333%;\n  }\n  .desktop-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .desktop-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .desktop-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .desktop-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .desktop-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .desktop-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .desktop-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .desktop-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .desktop-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .desktop-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .desktop-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .desktop-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .desktop-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .desktop-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .desktop-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .desktop-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .desktop-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .desktop-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .desktop-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .desktop-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .desktop-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .desktop-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .desktop-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .desktop-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .desktop-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .desktop-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 991px) {\n  .hidden-tablet {\n    display: none;\n  }\n  .tablet-one {\n    flex-basis: 7.33333333%;\n  }\n  .tablet-two {\n    flex-basis: 15.66666667%;\n  }\n  .tablet-three {\n    flex-basis: 24%;\n  }\n  .tablet-four {\n    flex-basis: 32.33333333%;\n  }\n  .tablet-five {\n    flex-basis: 40.66666667%;\n  }\n  .tablet-six {\n    flex-basis: 49%;\n  }\n  .tablet-seven {\n    flex-basis: 57.33333333%;\n  }\n  .tablet-eight {\n    flex-basis: 65.66666667%;\n  }\n  .tablet-nine {\n    flex-basis: 74%;\n  }\n  .tablet-ten {\n    flex-basis: 82.33333333%;\n  }\n  .tablet-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .tablet-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .tablet-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .tablet-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .tablet-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .tablet-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .tablet-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .tablet-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .tablet-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .tablet-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .tablet-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .tablet-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .tablet-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .tablet-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .tablet-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .tablet-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .tablet-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .tablet-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .tablet-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .tablet-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .tablet-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .tablet-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .tablet-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .tablet-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .tablet-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .tablet-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 661px) {\n  .hidden-phone {\n    display: none;\n  }\n  .phone-one {\n    flex-basis: 7.33333333%;\n  }\n  .phone-two {\n    flex-basis: 15.66666667%;\n  }\n  .phone-three {\n    flex-basis: 24%;\n  }\n  .phone-four {\n    flex-basis: 32.33333333%;\n  }\n  .phone-five {\n    flex-basis: 40.66666667%;\n  }\n  .phone-six {\n    flex-basis: 49%;\n  }\n  .phone-seven {\n    flex-basis: 57.33333333%;\n  }\n  .phone-eight {\n    flex-basis: 65.66666667%;\n  }\n  .phone-nine {\n    flex-basis: 74%;\n  }\n  .phone-ten {\n    flex-basis: 82.33333333%;\n  }\n  .phone-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .phone-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .phone-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .phone-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .phone-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .phone-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .phone-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .phone-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .phone-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .phone-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .phone-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .phone-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .phone-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .phone-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .phone-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .phone-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .phone-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .phone-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .phone-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .phone-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .phone-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .phone-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .phone-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .phone-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .phone-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .phone-twelve {\n    flex-basis: 98%;\n  }\n}\n.center {\n  justify-content: center !important;\n}\n.skeleton {\n  height: 25px;\n  width: 80%;\n  background-color: rgba(0, 0, 0, 0.15);\n  display: block;\n  margin: 27px auto;\n}\n.sky-blue {\n  background: #92AFD7;\n}\n.dark-blue {\n  background: #5A7684;\n}\n.nav {\n  position: fixed;\n  display: flex;\n  left: 0;\n  top: 0;\n  width: 100%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  background: #fff;\n  z-index: 1020;\n  padding: 10px 20px 10px 20px;\n}\n.nav .nav-item {\n  padding: 0 10px 0 10px;\n}\n.nav .nav-item .link {\n  line-height: 23px;\n  padding-bottom: 12px;\n  color: #404040;\n  font-size: 14px;\n}\n.nav .nav-item .link:hover {\n  color: #0CAA41;\n  border-bottom: 3px solid #0CAA41;\n}\n.nav .logo {\n  color: #0CAA41;\n  font-size: 1.2rem;\n  font-weight: bold;\n  padding-right: 20px;\n}\n.listings {\n  margin-top: 80px;\n}\n.listings p,\n.listings h2,\n.listings h3,\n.listings h5 {\n  color: #404040;\n}\n.listings h2 {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  font-size: 1.2em;\n}\n.listings .card {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n}\n.listings .card-header {\n  margin-bottom: 16px;\n  border-bottom: 1px solid #DEDEDE;\n}\n.listings .card-header h3 {\n  font-size: 1rem;\n  line-height: 1;\n}\n.listings .job-application {\n  border-bottom: 1px solid #c2c2c2;\n  padding: 10px;\n}\n.listings .job-application:last-child {\n  border-bottom: none;\n}\n.listings .job-application a {\n  color: #1861bf;\n  font-weight: bold;\n}\n.listings .job-application p {\n  line-height: 0;\n}\n.listings .job-application .applied-at {\n  font-size: 0.9em;\n}\n@media (min-width: 991px) {\n  .listings .job-application .applied-at {\n    float: right;\n    margin-top: -41px;\n  }\n}\n@media (max-width: 991px) {\n  .listings .job-application .applied-at {\n    line-height: 1;\n  }\n}\n.listings .job-application .info {\n  font-size: 0.85em;\n  margin-right: 10px;\n}\n.listings .job-application .availability p,\n.listings .job-application .availability .day-tags {\n  font-size: 0.85em;\n  display: inline-block;\n  float: left;\n}\n.listings .job-application .availability .day-tags {\n  margin: 3px 0 0 5px;\n}\n.listings .job-application .availability .day-tags .tag {\n  font-size: 0.65em;\n  padding: 6px;\n  font-weight: bold;\n  margin: 0 5px 0 5px;\n  color: white;\n  background: #0CAA41;\n}\n.listings .job-application .controls {\n  font-size: 1.5rem;\n}\n@media (min-width: 991px) {\n  .listings .job-application .controls {\n    float: right;\n    margin-top: -47px;\n  }\n}\n.listings .job-application .controls i {\n  margin-right: 15px;\n  cursor: pointer;\n  color: #0CAA41;\n}\n.listings .job-application .controls i:last-child {\n  margin-right: 0px;\n}\n.listings .sidebar {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n  min-height: 270px;\n}\n.listings .sidebar .facet {\n  margin: 10px 0 10px 0;\n}\n.listings .sidebar .facet p {\n  font-size: 0.8rem;\n  vertical-align: middle;\n  margin-top: 10px;\n}\n.listings .sidebar .facet .select-box {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n  font-size: 0.8rem;\n  padding: 8px;\n}\nbody {\n  font-family: 'Lato', sans-serif;\n  -webkit-font-smoothing: antialiased;\n  font-size: 16px;\n  background: #F0F0F0;\n}\nbody a {\n  cursor: pointer;\n  text-decoration: none;\n}\n.container {\n  padding: 10px 20px 10px 20px;\n}\n@media (max-width: 991px) {\n  .container {\n    padding: 10px 0 10px 0;\n  }\n}\n.dropdown {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n}\n.headings {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n}\nh1.title {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  text-transform: uppercase;\n  font-size: 1.4em;\n}\n.center {\n  justify-content: center;\n}\n";(require('lessify'))(css); module.exports = css;
+},{"lessify":52}],139:[function(require,module,exports){
+'use strict';
+
+/**
+ *
+ * Returns fake json
+ * Intent is to genereate large json data randomly
+ *
+ */
+
+var fakeJson = require('dummy-json');
 
 function getJson() {
     var helpers = {
         position: function position() {
-            return _dummyJson2.default.utils.randomArrayItem(['Server', 'Cook', 'Engineer', 'Painter', 'Front-End Engineer', 'Back-End Engineer', 'Api Developer']);
+            return fakeJson.utils.randomArrayItem(['Server', 'Cook', 'Engineer', 'Painter', 'Front-End Engineer', 'Back-End Engineer', 'Api Developer']);
         },
         answer: function answer() {
-            return _dummyJson2.default.utils.randomArrayItem(['Yes', 'No']);
+            return fakeJson.utils.randomArrayItem(['Yes', 'No']);
         }
     };
 
@@ -41552,16 +41888,9 @@ function getJson() {
 
     var tpl = '[\n        {{#repeat 3}}\n            {\n                "id": "{{@index}}",\n                "name": "{{firstName}} {{lastName}}",\n                "position": "{{position}}",\n                "applied": "{{date \'2015\' \'2017\' \'MM/DD/YYYY\'}}",\n                "experience": "{{int 1 20}}",\n                "availability": {{> availability}},\n                "questions": [\n                    {\n                        "text": "Are you authorized to work in the United States?",\n                        "answer": "{{answer}}"\n                    },\n                    {\n                        "text": "Have you ever been convicted of a felony?",\n                        "answer": "{{answer}}"\n                    }\n                ]\n            }\n        {{/repeat}}\n    ]';
 
-    return _dummyJson2.default.parse(tpl, { helpers: helpers, partials: partials });
-} /**
-   *
-   * Returns fake json
-   * Intent is to genereate large json data randomly
-   *
-   */
+    return fakeJson.parse(tpl, { helpers: helpers, partials: partials });
+};
 
-;
+module.exports = getJson;
 
-exports.default = getJson;
-
-},{"dummy-json":9}]},{},[6]);
+},{"dummy-json":16}]},{},[13]);

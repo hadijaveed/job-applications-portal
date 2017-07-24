@@ -1,9 +1,11 @@
+const $ = require('jquery'),
+    Ractive = require('ractive'),
+    ListingFactory = require('./services/listings')(),
+    ListingDataService = require('./services/data-service')(),
+    AdminService = require('./services/admin-services')();
 
-import $ from 'jquery';
-import Ractive from 'ractive';
+require('./styles/index.less');
 
-import getFakeJson from './utils/fake-json';
-import './styles/index.less';
 
 
 $(window).on('scroll', () => {
@@ -24,6 +26,55 @@ $(window).on('scroll', () => {
 
 });
 
+
 const jobComponent = new Ractive({
-    el: ''
+    el: '[app-main-mount]',
+    template: require('./app.html'),
+    components: {
+        navBar: require('./components/nav'),
+        sidebar: require('./components/filter_sidebar'),
+        listings: require('./components/application_listings')
+    },
+
+    onrender: RenderCtrl
 });
+
+function RenderCtrl() {
+    let self = this;
+
+    // get all applications on render
+    ListingFactory
+        .getAllApplications()
+        .then(data => {
+            self.set('applications', ListingDataService.mapAvailabilityDays(data));
+        })
+        .catch(err => {
+            console.log('see error on render ', err);
+        });
+
+    self.set({
+        methods: {
+
+            bookmarkApplication(id) {
+                AdminService.setBookmark(id)
+                    .then(bookamrks => {
+                        console.log('see bookmarks ', bookamrks);
+                    })
+                    .catch(err => {
+                        console.error('Something went wrong ', err);
+                    });
+            },
+
+            favouriteApplication(id) {
+                AdminService.setFavourite(id)
+                    .then(favourites => {
+                        console.log('see favourites ', favourites);
+                    })
+                    .catch(err => {
+                        console.error('Something went wrong ', err);
+                    });
+            }
+        }
+    });
+
+}

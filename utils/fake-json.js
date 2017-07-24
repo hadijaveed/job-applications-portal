@@ -5,7 +5,8 @@
  *
  */
 
-import fakeJson from 'dummy-json';
+const fakeJson = require('dummy-json');
+
 
 
 function getJson() {
@@ -62,4 +63,4 @@ function getJson() {
     return fakeJson.parse(tpl, { helpers, partials });
 };
 
-export default getJson;
+module.exports = getJson;
