@@ -1,0 +1,115 @@
+.listings {
+    margin-top: 80px;
+
+    p, h2, h3, h5 {
+        color: @default-text-color;
+    }
+
+    h2 {
+        .headings;
+        font-size: 1.2em;
+    }
+
+    .card {
+        min-height: 400px;
+        padding: @default-card-padding;
+        margin-bottom: 20px;
+        box-shadow: @box-shadow;
+        border-radius: 3px;
+        background: #fff;
+    }
+
+    .card-header {
+        margin-bottom: 16px;
+        border-bottom: 1px solid #DEDEDE;
+        h3 {
+            font-size: 1rem;
+            line-height: 1;
+        }
+    }
+
+    .job-application {
+        border-bottom: @default-border;
+        &:last-child {
+            border-bottom: none;
+        }
+        padding: 10px;
+
+        a {
+            color: #1861bf;
+            font-weight: bold;
+        }
+
+        p {
+            line-height: 0;
+        }
+
+        .applied-at {
+            font-size: 0.9em;
+            @media (min-width: 991px) {
+                float: right;
+                margin-top: -41px;
+            }
+            @media (max-width: 991px) {
+                line-height: 1;
+            }
+        }
+
+        .info {
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+
+        .availability {
+            p, .day-tags {
+                font-size: 0.85em;
+                display: inline-block;
+                float: left;
+            }
+
+            .day-tags {
+                margin: 3px 0 0 5px;
+                .tag {
+                    font-size: 0.65em;
+                    padding: 6px;
+                    font-weight: bold;
+                    margin: 0 5px 0 5px;
+                    color: white;
+                    background: @logo-color;
+                }
+            }
+        }
+
+        .controls {
+            font-size: 1.5rem;
+            @media (min-width: 991px) {
+                float: right;
+                margin-top: -47px;
+            }
+            i {
+                margin-right: 15px;
+                &:last-child { margin-right: 0px; }
+                cursor: pointer;
+                color: @logo-color;
+            }
+        }
+    }
+
+    .sidebar {
+        .card;
+        min-height: 270px;
+        .facet {
+            margin: 10px 0 10px 0;
+            p {
+                font-size: 0.8rem;
+                vertical-align: middle;
+                margin-top: 10px;
+            }
+            .select-box {
+                .dropdown;
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+        }
+    }
+}

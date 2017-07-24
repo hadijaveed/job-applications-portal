@@ -1,0 +1,23 @@
+{
+  "name": "application-portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "watchify index.js -o bundle/bundle.js -t [ stringify ] -t [ babelify --presets [ es2015 ] ] -t [ lessify ]"
+  },
+  "author": "hadi javeed <hadij.pk@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0",
+    "lessify": "^1.0.1",
+    "stringify": "^5.1.0"
+  },
+  "dependencies": {
+    "dummy-json": "^2.0.0",
+    "handlebars": "^4.0.10",
+    "jquery": "^3.2.1"
+  }
+}
