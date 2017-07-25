@@ -12,14 +12,16 @@
     <div class="container listings">
         <div class="grid relaxed-gutters">
             <div class="desktop-three hidden-tablet hidden-phone">
-                <sidebar
-                    facets="{{facets}}"
-                    searchOnFacet="{{methods.searchOnFacet}}"
-                    removeSearchTag="{{methods.removeSearchTag}}"
-                    filterCriteria="{{filterCriteria}}"
-                    sortApplications="{{methods.sortApplications}}"
-                    sortCriteria="{{sortCriteria}}"
-                />
+                <div data-sticky-element>
+                    <sidebar
+                        facets="{{facets}}"
+                        searchOnFacet="{{methods.searchOnFacet}}"
+                        removeSearchTag="{{methods.removeSearchTag}}"
+                        filterCriteria="{{filterCriteria}}"
+                        sortApplications="{{methods.sortApplications}}"
+                        sortCriteria="{{sortCriteria}}"
+                    />
+                </div>
             </div>
 
             <div class="tablet-twelve phone-twelve hidden-desktop">
