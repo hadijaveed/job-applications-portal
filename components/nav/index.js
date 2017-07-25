@@ -18,12 +18,10 @@ module.exports = Ractive.extend({
 
 
     onrender() {
-
         this.on({
             changeLink(e) {
-
+                this.set('step', e.node.getAttribute('data-link'));
             }
         });
-
     }
 });

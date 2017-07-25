@@ -6,8 +6,8 @@
     </div>
 
     {{#each navLinks}}
-        <div class="nav-item">
-            <a href="#" class="link">
+        <div class="nav-item" on-click="changeLink" data-link="{{this}}">
+            <a role="button" class="link {{# this===step}}active{{/}}">
                 {{this}}
             </a>
         </div>

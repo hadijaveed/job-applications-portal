@@ -84,13 +84,17 @@
             font-size: 1.5rem;
             @media (min-width: 991px) {
                 float: right;
-                margin-top: -47px;
+                margin-top: -31px;
             }
             i {
                 margin-right: 15px;
                 &:last-child { margin-right: 0px; }
                 cursor: pointer;
                 color: @logo-color;
+            }
+            .remove-btn {
+                font-weight: 400;
+                font-size: 0.7em;
             }
         }
     }
@@ -111,5 +115,47 @@
                 padding: 8px;
             }
         }
+        .searh-tag {
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            border-radius: 3px;
+            background: @logo-color;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            i {
+                float: right;
+                margin-top: -13px;
+            }
+        }
     }
+}
+
+.application-detail-modal {
+    .listings.job-application;
+    padding-top: 5px;
+    .question {
+        margin-bottom: 15px;
+        border: 1px solid #9c9c9c;
+        border-radius: 3px;
+        font-size: 0.83rem;
+        padding: 5px;
+        background: #e6e6e6;
+        p {
+            letter-spacing: 0.1em;
+            color: #212121;
+        }
+    }
+
+    .answer {
+        .question;
+        background: @logo-color;
+        color: white;
+        p {
+            color: white;
+            font-weight: bold;
+        }
+    }
+
 }

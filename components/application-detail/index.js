@@ -1,6 +1,6 @@
 /**
  *
- * Listings Display Component
+ * Application Detail Component
  *
  */
 
@@ -9,8 +9,7 @@ const Ractive = require('ractive');
 
 module.exports = Ractive.extend({
     isolated: true,
-    template: require('./listings.html'),
-
+    template: require('./detail_modal.html'),
     isInBookmarks(id) {
         let { bookmarks } = this.get();
         return (bookmarks.indexOf(id) !== -1);
@@ -20,17 +19,13 @@ module.exports = Ractive.extend({
         let { favourites } = this.get();
         return (favourites.indexOf(id) !== -1);
     },
-
+    
     onrender() {
         let self = this;
-
         self.on({
-
-            showApplicationDetail(e) {
-                e.original.preventDefault();
-                let id = e.node.getAttribute('data-id'),
-                    { applicationMethods } = this.get();
-                applicationMethods.displayApplicationDetail(id);
+            hideModal(e) {
+                let { applicationMethods } = self.get();
+                applicationMethods.hideDetailModal();
             },
 
             applicationEvent(e) {
@@ -60,7 +55,6 @@ module.exports = Ractive.extend({
                         console.log('do nothing here ');
                 }
             }
-
         });
     }
 });

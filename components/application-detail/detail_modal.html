@@ -1,0 +1,95 @@
+{{# showDetailModal}}
+    <div class="overlay" on-click="hideModal"></div>
+    <div class="modal">
+        <div class="container">
+            {{# appDetail}}
+                <div class="application-detail-modal">
+                    <a role="button">{{position}}</a>
+                    <p>{{name}}</p>
+                    <p class="applied-at">
+                        <strong>Applied: </strong>{{applied}} ago
+                    </p>
+
+                    <div class="grid no-gutters">
+                        <p class="info">
+                            <strong>Experience: </strong> {{experience}} years
+                        </p>
+
+                        <div class="availability">
+                            <p><strong>Availability :</strong></p>
+                            <div class="day-tags">
+                                <div class="grid">
+                                    {{#each availableOnDays}}
+                                        <div class="tag">{{this}}</div>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <div class="grid">
+                            {{# step !== 'Favourites' && step !== 'Bookmarks' }}
+                                {{#if isInFavourites(id)}}
+                                    <i
+                                        class="fa fa-heart"
+                                        title="Favourite"
+                                        data-id="{{id}}"
+                                        data-action="removeFromFavourites"
+                                        on-click="applicationEvent"
+                                    >
+                                    </i>
+                                    {{else}}
+                                    <i
+                                        class="fa fa-heart-o"
+                                        title="Favourite"
+                                        data-id="{{id}}"
+                                        data-action="favouriteApllication"
+                                        on-click="applicationEvent"
+                                    >
+                                    </i>
+                                {{/if}}
+                                {{#if isInBookmarks(id)}}
+                                    <i
+                                        class="fa fa-bookmark"
+                                        title="Bookmark"
+                                        data-action="removeFromBookmarks"
+                                        data-id="{{id}}"
+                                        on-click="applicationEvent"
+                                    >
+                                    </i>
+                                    {{else}}
+                                    <i
+                                        class="fa fa-bookmark-o"
+                                        title="Bookmark"
+                                        data-action="bookamrkApplication"
+                                        data-id="{{id}}"
+                                        on-click="applicationEvent"
+                                    >
+                                    </i>
+                                {{/if}}
+                            {{/}}
+                        </div>
+                    </div>
+
+                    <div class="grid no-gutters">
+                        <h4>Questions?</h4>
+                    </div>
+
+                    {{#each questions}}
+                        <div class="grid no-gutters">
+                            <div class="question">
+                                <p>{{text}}</p>
+                            </div>
+                        </div>
+                        <div class="grid no-gutters">
+                            <div class="answer">
+                                <p>{{answer}}</p>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            {{/}}
+        </div>
+    </div>
+{{/}}

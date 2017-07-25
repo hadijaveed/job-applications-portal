@@ -1,7 +1,14 @@
 <div class="sidebar">
     <div class="card-header">
-        <h3>Filter</h3>
+        <h3>Filters</h3>
     </div>
+
+    {{#each filterCriteria}}
+        <div class="searh-tag" on-click="removeSearchTag" data-tag-index="{{@index}}">
+            <div>{{type}}: {{value}}</div>
+            <i class="fa fa-times"></i>
+        </div>
+    {{/each}}
 
     {{# facets.positions.length > 1}}
         <div class="grid facet">
@@ -27,7 +34,8 @@
         </div>
 
         <div class="desktop-eight tablet-eight mobile-eight">
-            <select class="select-box">
+            <select class="select-box" on-change="searchApplications" data-facet="availability">
+                <option value="">Select Day</option>
                 <option value="M">Monday</option>
                 <option value="T">Tuesday</option>
                 <option value="W">Wednesday</option>
@@ -39,19 +47,21 @@
         </div>
     </div>
 
-    <div class="grid facet">
-        <div class="desktop-four tablet-four mobile-four">
-            <p>Experience</p>
-        </div>
 
-        <div class="desktop-eight tablet-eight mobile-eight">
-            <select class="select-box">
-                <option value="">1 Year</option>
-                <option value="">2 Years</option>
-                <option value="">3 Years</option>
-                <option value="">4 Years</option>
-                <option value="">5 Years</option>
-            </select>
+    {{# facets.experience.length > 1}}
+        <div class="grid facet">
+            <div class="desktop-four tablet-four mobile-four">
+                <p>Experience</p>
+            </div>
+
+            <div class="desktop-eight tablet-eight mobile-eight">
+                <select class="select-box" on-change="searchApplications" data-facet="experience">
+                    <option value="">Select Experience</option>
+                    {{#each facets.experience}}
+                        <option value="{{this}}">{{this}} Years</option>
+                    {{/each}}
+                </select>
+            </div>
         </div>
-    </div>
+    {{/}}
 </div>

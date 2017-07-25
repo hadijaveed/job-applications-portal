@@ -20,14 +20,9 @@ const errorService = function() {
             message: 'Application filter method requires @param filters as a {Array}'
         },
 
-        4002: {
-            code: 4002,
-            message: 'Application sort method requires @param criteria as a {string}'
-        },
-
         4003: {
-            code: 4002,
-            message: 'Application getDetail method requires @param id as a {number}'
+            code: 4003,
+            message: 'Application getDetail method requires @param id as a {string}'
         }
     };
 
@@ -71,7 +66,7 @@ const jobPortalFactory = function() {
             };
         },
 
-        getApplications(filters) {
+        getApplications(filters, resultsBy) {
             let self = this;
             return new Promise((resolve, reject) => {
 
@@ -116,7 +111,8 @@ const jobPortalFactory = function() {
 
         getApplicationDetail(id) {
             return new Promise((resolve, reject) => {
-                if (typeof id !== 'string') return reject({ error: sendErrorService(4001) });
+                if (typeof id !== 'string') return reject({ error: sendErrorService(4003) });
+                resolve(results.find(result => result.id === id));
             });
         }
 
