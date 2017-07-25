@@ -129,14 +129,24 @@
                 margin-top: -13px;
             }
         }
+        .sort-control {
+            i {
+                cursor: pointer;
+                margin-top: 9px;
+            }
+        }
     }
+}
+
+.app-sort {
+    .listings.sidebar.facet;
 }
 
 .application-detail-modal {
     .listings.job-application;
     padding-top: 5px;
     .question {
-        margin-bottom: 15px;
+        margin: 15px 0 15px 0;
         border: 1px solid #9c9c9c;
         border-radius: 3px;
         font-size: 0.83rem;
@@ -147,15 +157,4 @@
             color: #212121;
         }
     }
-
-    .answer {
-        .question;
-        background: @logo-color;
-        color: white;
-        p {
-            color: white;
-            font-weight: bold;
-        }
-    }
-
 }

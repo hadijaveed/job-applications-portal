@@ -32,6 +32,17 @@ module.exports = Ractive.extend({
                     { searchOnFacet } = this.get();
 
                 if (facetValue !== '') searchOnFacet({ facetValue, facetType });
+            },
+
+            sortApplications(e) {
+                let { sortCriteria, sortApplications } = this.get();
+                sortApplications(sortCriteria);
+            },
+
+            chagneSortType(e) {
+                let { sortCriteria, sortApplications } = this.get();
+                sortCriteria.type = e.node.getAttribute('data-type');
+                sortApplications(sortCriteria);
             }
         });
 

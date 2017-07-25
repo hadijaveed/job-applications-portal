@@ -52,6 +52,10 @@ const jobPortalFactory = function() {
             return a.toLowerCase().localeCompare(b.toLowerCase());
         },
 
+        sortAppliedOn(a, b) {
+            return new Date(a.applied) - new Date(b.applied);
+        },
+
         sortIntegers(a, b) {
             return parseInt(a) - parseInt(b);
         }
@@ -66,7 +70,7 @@ const jobPortalFactory = function() {
             };
         },
 
-        getApplications(filters, resultsBy) {
+        getApplications(filters, sortCriteria) {
             let self = this;
             return new Promise((resolve, reject) => {
 
@@ -100,8 +104,18 @@ const jobPortalFactory = function() {
                     .filter(filterOnFacet('experience'))
                     .filter(filterOnFacet('availability'));
 
+                let sortedResults = filteredResults;
+
+                if (typeof sortCriteria === 'object') {
+                    if (sortCriteria.on === 'appliedOn') sortedResults = sortedResults.sort((a, b) => new Date(a.applied) - new Date(b.applied));
+                    if (sortCriteria.on === 'experience') sortedResults = sortedResults.sort((a, b) => parseInt(a.experience) - parseInt(b.experience));
+                    if (sortCriteria.on === 'name') sortedResults = sortedResults.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+                    if (sortCriteria.on === 'position') sortedResults = sortedResults.sort((a, b) => a.position.toLowerCase().localeCompare(b.position.toLowerCase()));
+                    if (sortCriteria.type === 'desc') sortedResults = sortedResults.reverse();
+                }
+
                 resolve({
-                    results: filteredResults,
+                    results: sortedResults,
                     facets: self.getSearchFacets(filteredResults)
                 });
 

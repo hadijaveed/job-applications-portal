@@ -464,12 +464,206 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
-module.exports = "<navBar step=\"{{step}}\"/>\n<detailModal\n    showDetailModal=\"{{showDetailModal}}\"\n    applicationMethods=\"{{methods}}\"\n    bookmarks=\"{{bookmarks}}\"\n    favourites=\"{{favourites}}\"\n    appDetail=\"{{appDetail}}\"\n    step=\"{{step}}\"\n/>\n{{# step=='Applications'}}\n\n    <div class=\"container listings\">\n        <div class=\"grid relaxed-gutters\">\n            <div class=\"desktop-three hidden-tablet hidden-phone\">\n                <sidebar\n                    facets=\"{{facets}}\"\n                    searchOnFacet=\"{{methods.searchOnFacet}}\"\n                    removeSearchTag=\"{{methods.removeSearchTag}}\"\n                    filterCriteria=\"{{filterCriteria}}\"\n                />\n            </div>\n\n            <div class=\"desktop-nine tablet-twelve phone-twelve\">\n                <listings\n                    step=\"{{step}}\"\n                    applications=\"{{applications}}\"\n                    applicationMethods=\"{{methods}}\"\n                    bookmarks=\"{{bookmarks}}\"\n                    favourites=\"{{favourites}}\"\n                />\n            </div>\n        </div>\n    </div>\n{{/}}\n\n{{# step=='Bookmarks'}}\n    <div class=\"container listings\">\n        <div class=\"grid relaxed-gutters\">\n            <div class=\"desktop-twelve tablet-twelve phone-twelve\">\n                <listings\n                    step=\"{{step}}\"\n                    applications=\"{{bookmarkedApps}}\"\n                    applicationMethods=\"{{methods}}\"\n                    bookmarks=\"{{bookmarks}}\"\n                    favourites=\"{{favourites}}\"\n                />\n            </div>\n        </div>\n    </div>\n{{/}}\n\n{{# step=='Favourites'}}\n    <div class=\"container listings\">\n        <div class=\"grid relaxed-gutters\">\n            <div class=\"desktop-twelve tablet-twelve phone-twelve\">\n                <listings\n                    step=\"{{step}}\"\n                    applications=\"{{favouriteApps}}\"\n                    applicationMethods=\"{{methods}}\"\n                    bookmarks=\"{{bookmarks}}\"\n                    favourites=\"{{favouriteApps}}\"\n                />\n            </div>\n        </div>\n    </div>\n{{/}}\n";
+module.exports = "<navBar step=\"{{step}}\"/>\n<detailModal\n    showDetailModal=\"{{showDetailModal}}\"\n    applicationMethods=\"{{methods}}\"\n    bookmarks=\"{{bookmarks}}\"\n    favourites=\"{{favourites}}\"\n    appDetail=\"{{appDetail}}\"\n    step=\"{{step}}\"\n/>\n{{# step=='Applications'}}\n\n    <div class=\"container listings\">\n        <div class=\"grid relaxed-gutters\">\n            <div class=\"desktop-three hidden-tablet hidden-phone\">\n                <sidebar\n                    facets=\"{{facets}}\"\n                    searchOnFacet=\"{{methods.searchOnFacet}}\"\n                    removeSearchTag=\"{{methods.removeSearchTag}}\"\n                    filterCriteria=\"{{filterCriteria}}\"\n                    sortApplications=\"{{methods.sortApplications}}\"\n                    sortCriteria=\"{{sortCriteria}}\"\n                />\n            </div>\n\n            <div class=\"tablet-twelve phone-twelve hidden-desktop\">\n                <sidebar\n                    facets=\"{{facets}}\"\n                    searchOnFacet=\"{{methods.searchOnFacet}}\"\n                    removeSearchTag=\"{{methods.removeSearchTag}}\"\n                    sortApplications=\"{{methods.sortApplications}}\"\n                    filterCriteria=\"{{filterCriteria}}\"\n                />\n            </div>\n\n            <div class=\"desktop-nine tablet-twelve phone-twelve\">\n                <listings\n                    step=\"{{step}}\"\n                    applications=\"{{applications}}\"\n                    applicationMethods=\"{{methods}}\"\n                    bookmarks=\"{{bookmarks}}\"\n                    favourites=\"{{favourites}}\"\n                />\n            </div>\n        </div>\n    </div>\n{{/}}\n\n{{# step=='Bookmarks'}}\n    <div class=\"container listings\">\n        <div class=\"grid relaxed-gutters\">\n            <div class=\"desktop-twelve tablet-twelve phone-twelve\">\n                <listings\n                    step=\"{{step}}\"\n                    applications=\"{{bookmarkedApps}}\"\n                    applicationMethods=\"{{methods}}\"\n                    bookmarks=\"{{bookmarks}}\"\n                    favourites=\"{{favourites}}\"\n                />\n            </div>\n        </div>\n    </div>\n{{/}}\n\n{{# step=='Favourites'}}\n    <div class=\"container listings\">\n        <div class=\"grid relaxed-gutters\">\n            <div class=\"desktop-twelve tablet-twelve phone-twelve\">\n                <listings\n                    step=\"{{step}}\"\n                    applications=\"{{favouriteApps}}\"\n                    applicationMethods=\"{{methods}}\"\n                    bookmarks=\"{{bookmarks}}\"\n                    favourites=\"{{favouriteApps}}\"\n                />\n            </div>\n        </div>\n    </div>\n{{/}}\n";
 
 },{}],7:[function(require,module,exports){
-module.exports = "{{# showDetailModal}}\n    <div class=\"overlay\" on-click=\"hideModal\"></div>\n    <div class=\"modal\">\n        <div class=\"container\">\n            {{# appDetail}}\n                <div class=\"application-detail-modal\">\n                    <a role=\"button\">{{position}}</a>\n                    <p>{{name}}</p>\n                    <p class=\"applied-at\">\n                        <strong>Applied: </strong>{{applied}} ago\n                    </p>\n\n                    <div class=\"grid no-gutters\">\n                        <p class=\"info\">\n                            <strong>Experience: </strong> {{experience}} years\n                        </p>\n\n                        <div class=\"availability\">\n                            <p><strong>Availability :</strong></p>\n                            <div class=\"day-tags\">\n                                <div class=\"grid\">\n                                    {{#each availableOnDays}}\n                                        <div class=\"tag\">{{this}}</div>\n                                    {{/each}}\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class=\"controls\">\n                        <div class=\"grid\">\n                            {{# step !== 'Favourites' && step !== 'Bookmarks' }}\n                                {{#if isInFavourites(id)}}\n                                    <i\n                                        class=\"fa fa-heart\"\n                                        title=\"Favourite\"\n                                        data-id=\"{{id}}\"\n                                        data-action=\"removeFromFavourites\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                    {{else}}\n                                    <i\n                                        class=\"fa fa-heart-o\"\n                                        title=\"Favourite\"\n                                        data-id=\"{{id}}\"\n                                        data-action=\"favouriteApllication\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                {{/if}}\n                                {{#if isInBookmarks(id)}}\n                                    <i\n                                        class=\"fa fa-bookmark\"\n                                        title=\"Bookmark\"\n                                        data-action=\"removeFromBookmarks\"\n                                        data-id=\"{{id}}\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                    {{else}}\n                                    <i\n                                        class=\"fa fa-bookmark-o\"\n                                        title=\"Bookmark\"\n                                        data-action=\"bookamrkApplication\"\n                                        data-id=\"{{id}}\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                {{/if}}\n                            {{/}}\n                        </div>\n                    </div>\n\n                    <div class=\"grid no-gutters\">\n                        <h4>Questions?</h4>\n                    </div>\n\n                    {{#each questions}}\n                        <div class=\"grid no-gutters\">\n                            <div class=\"question\">\n                                <p>{{text}}</p>\n                            </div>\n                        </div>\n                        <div class=\"grid no-gutters\">\n                            <div class=\"answer\">\n                                <p>{{answer}}</p>\n                            </div>\n                        </div>\n                    {{/each}}\n                </div>\n            {{/}}\n        </div>\n    </div>\n{{/}}\n";
+'use strict';
 
-},{}],8:[function(require,module,exports){
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/**
+ *
+ * Main Dashboard Component
+ *
+ */
+
+var Ractive = require('ractive'),
+    ListingFactory = require('./services/listings')(),
+    ListingDataService = require('./services/data-service')(),
+    AdminService = require('./services/admin-services')();
+
+// style main file
+require('./styles/index.less');
+
+var jobComponent = new Ractive({
+    el: '[app-main-mount]',
+    template: require('./app.html'),
+    data: {
+        step: 'Applications',
+        sortCriteria: {
+            on: 'appliedOn',
+            type: 'desc'
+        }
+    },
+    components: {
+        navBar: require('./components/nav'),
+        sidebar: require('./components/filter_sidebar'),
+        listings: require('./components/application_listings'),
+        detailModal: require('./components/application-detail')
+    },
+
+    setSearchData: function setSearchData(filterCriteria) {
+        var self = this;
+
+        ListingFactory.getApplications(filterCriteria, self.get('sortCriteria')).then(function (searchData) {
+            self.set({
+                applications: ListingDataService.mapAvailabilityDays(searchData.results),
+                facets: searchData.facets,
+                filterCriteria: filterCriteria
+            });
+        }).catch(function (err) {
+            console.error('something went wrong ', err);
+        });
+    },
+    mapBookMarkedApps: function mapBookMarkedApps() {
+        var self = this;
+
+        var _self$get = self.get(),
+            bookmarks = _self$get.bookmarks;
+
+        var promises = bookmarks.map(function (bookmark) {
+            return ListingFactory.getApplicationDetail(bookmark);
+        });
+        Promise.all(promises).then(function (results) {
+            self.set('bookmarkedApps', results);
+        });
+    },
+    mapFavourites: function mapFavourites() {
+        var self = this;
+
+        var _self$get2 = self.get(),
+            favourites = _self$get2.favourites;
+
+        var promises = favourites.map(function (favourite) {
+            return ListingFactory.getApplicationDetail(favourite);
+        });
+        Promise.all(promises).then(function (results) {
+            self.set('favouriteApps', results);
+        });
+    },
+
+
+    onrender: RenderCtrl
+});
+
+function RenderCtrl() {
+    var self = this;
+
+    // get all applications data on render
+    var promises = [ListingFactory.getApplications([], self.get('sortCriteria')), AdminService.getBookmarks(), AdminService.getFavourites()];
+
+    Promise.all(promises).then(function (replies) {
+        var searchData = void 0,
+            bookmarks = void 0,
+            favourites = void 0;
+
+        var _replies = _slicedToArray(replies, 3);
+
+        searchData = _replies[0];
+        bookmarks = _replies[1];
+        favourites = _replies[2];
+
+        console.log('see search data here ', searchData);
+        self.set({
+            applications: ListingDataService.mapAvailabilityDays(searchData.results),
+            bookmarks: bookmarks,
+            favourites: favourites,
+            filterCriteria: [],
+            facets: searchData.facets,
+            showDetailModal: false
+        });
+    }).catch(function (err) {
+        console.error('Error while fetching data ', err);
+    });
+
+    self.set({
+
+        /**
+         * [Centralised actions that are used in the application]
+         * @type {Object}
+         */
+
+        methods: {
+            searchOnFacet: function searchOnFacet(_ref) {
+                var facetType = _ref.facetType,
+                    facetValue = _ref.facetValue;
+
+                var _self$get3 = self.get(),
+                    filterCriteria = _self$get3.filterCriteria;
+
+                var criteriaWithType = filterCriteria.find(function (criteria) {
+                    return criteria.type === facetType && criteria.value === facetValue;
+                });
+                if (!criteriaWithType || typeof criteriaWithType === 'undefined') {
+                    filterCriteria.push({ type: facetType, value: facetValue });
+                    self.setSearchData(filterCriteria);
+                }
+            },
+            removeSearchTag: function removeSearchTag(id) {
+                var _self$get4 = self.get(),
+                    filterCriteria = _self$get4.filterCriteria;
+
+                filterCriteria.splice(id, 1);
+                self.setSearchData(filterCriteria);
+            },
+            sortApplications: function sortApplications(sortCriteria) {
+                self.set('sortCriteria', sortCriteria);
+                self.setSearchData(self.get('filterCriteria'));
+            },
+            bookmarkApplication: function bookmarkApplication(id) {
+                AdminService.setBookmark(id).then(function (bookmarks) {
+                    self.set('bookmarks', bookmarks);
+                    self.mapBookMarkedApps();
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            favouriteApplication: function favouriteApplication(id) {
+                AdminService.setFavourite(id).then(function (favourites) {
+                    self.set('favourites', favourites);
+                    self.mapFavourites();
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            removeAppFromBookmarks: function removeAppFromBookmarks(id) {
+                AdminService.removeBookmark(id).then(function (bookmarks) {
+                    self.set('bookmarks', bookmarks);
+                    self.mapBookMarkedApps();
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            removeAppFromFavourites: function removeAppFromFavourites(id) {
+                AdminService.removeFavourite(id).then(function (favourites) {
+                    self.set('favourites', favourites);
+                    self.mapFavourites();
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            displayApplicationDetail: function displayApplicationDetail(id) {
+                var _self$get5 = self.get(),
+                    applications = _self$get5.applications;
+
+                self.set({
+                    showDetailModal: true,
+                    appDetail: applications.find(function (application) {
+                        return application.id === id;
+                    })
+                });
+            },
+            hideDetailModal: function hideDetailModal() {
+                self.set('showDetailModal', false);
+            }
+        }
+    });
+}
+
+},{"./app.html":6,"./components/application-detail":9,"./components/application_listings":10,"./components/filter_sidebar":12,"./components/nav":14,"./services/admin-services":138,"./services/data-service":139,"./services/listings":140,"./styles/index.less":141,"ractive":118}],8:[function(require,module,exports){
+module.exports = "{{# showDetailModal}}\n    <div class=\"overlay\" on-click=\"hideModal\"></div>\n    <div class=\"modal\">\n        <div class=\"container\">\n            {{# appDetail}}\n                <div class=\"application-detail-modal\">\n                    <a role=\"button\">{{position}}</a>\n                    <p>{{name}}</p>\n                    <p class=\"applied-at\">\n                        <strong>Applied: </strong>{{applied}}\n                    </p>\n\n                    <div class=\"grid no-gutters\">\n                        <p class=\"info\">\n                            <strong>Experience: </strong> {{experience}} years\n                        </p>\n\n                        <div class=\"availability\">\n                            <p><strong>Availability :</strong></p>\n                            <div class=\"day-tags\">\n                                <div class=\"grid\">\n                                    {{#each availableOnDays}}\n                                        <div class=\"tag\">{{this}}</div>\n                                    {{/each}}\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class=\"controls\">\n                        <div class=\"grid\">\n                            {{# step !== 'Favourites' && step !== 'Bookmarks' }}\n                                {{#if isInFavourites(id)}}\n                                    <i\n                                        class=\"fa fa-heart\"\n                                        title=\"Favourite\"\n                                        data-id=\"{{id}}\"\n                                        data-action=\"removeFromFavourites\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                    {{else}}\n                                    <i\n                                        class=\"fa fa-heart-o\"\n                                        title=\"Favourite\"\n                                        data-id=\"{{id}}\"\n                                        data-action=\"favouriteApllication\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                {{/if}}\n                                {{#if isInBookmarks(id)}}\n                                    <i\n                                        class=\"fa fa-bookmark\"\n                                        title=\"Bookmark\"\n                                        data-action=\"removeFromBookmarks\"\n                                        data-id=\"{{id}}\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                    {{else}}\n                                    <i\n                                        class=\"fa fa-bookmark-o\"\n                                        title=\"Bookmark\"\n                                        data-action=\"bookamrkApplication\"\n                                        data-id=\"{{id}}\"\n                                        on-click=\"applicationEvent\"\n                                    >\n                                    </i>\n                                {{/if}}\n                            {{/}}\n                        </div>\n                    </div>\n\n                    <div class=\"grid no-gutters\">\n                        <h4>Questions?</h4>\n                    </div>\n\n                    {{#each questions}}\n                        <div class=\"grid no-gutters\">\n                            <div class=\"question\">\n                                <p>{{text}}</p>\n                            </div>\n                        </div>\n                        <div class=\"grid no-gutters\">\n                            <p><strong>Answer: </strong>{{answer}}</p>\n                        </div>\n                    {{/each}}\n                </div>\n            {{/}}\n        </div>\n    </div>\n{{/}}\n";
+
+},{}],9:[function(require,module,exports){
 'use strict';
 
 /**
@@ -537,7 +731,7 @@ module.exports = Ractive.extend({
     }
 });
 
-},{"./detail_modal.html":7,"ractive":117}],9:[function(require,module,exports){
+},{"./detail_modal.html":8,"ractive":118}],10:[function(require,module,exports){
 'use strict';
 
 /**
@@ -609,10 +803,10 @@ module.exports = Ractive.extend({
     }
 });
 
-},{"./listings.html":10,"ractive":117}],10:[function(require,module,exports){
-module.exports = "<div class=\"card\">\n    <div class=\"card-header\">\n        <h3>{{step}}</h3>\n    </div>\n\n    {{#each applications}}\n        <div class=\"job-application\">\n            <a role=\"button\" on-click=\"showApplicationDetail\" data-id=\"{{id}}\">{{position}}</a>\n            <p>{{name}}</p>\n            <p class=\"applied-at\">\n                <strong>Applied: </strong>{{applied}} ago\n            </p>\n\n            <div class=\"grid no-gutters\">\n                <p class=\"info\">\n                    <strong>Experience: </strong> {{experience}} years\n                </p>\n\n                <div class=\"availability\">\n                    <p><strong>Availability :</strong></p>\n                    <div class=\"day-tags\">\n                        <div class=\"grid\">\n                            {{#each availableOnDays}}\n                                <div class=\"tag\">{{this}}</div>\n                            {{/each}}\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"controls\">\n                <div class=\"grid\">\n                    {{#step == 'Favourites'}}\n                        <a role=\"button\" class=\"remove-btn\" data-id=\"{{id}}\" data-action=\"removeFromFavourites\" on-click=\"applicationEvent\">Remove</a>\n                    {{/}}\n                    {{#step == 'Bookmarks'}}\n                        <a role=\"button\" class=\"remove-btn\" data-id=\"{{id}}\" data-action=\"removeFromBookmarks\" on-click=\"applicationEvent\">Remove</a>\n                    {{/}}\n                    {{# step !== 'Favourites' && step !== 'Bookmarks' }}\n                        {{#if isInFavourites(id)}}\n                            <i\n                                class=\"fa fa-heart\"\n                                title=\"Favourite\"\n                                data-id=\"{{id}}\"\n                                data-action=\"removeFromFavourites\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                            {{else}}\n                            <i\n                                class=\"fa fa-heart-o\"\n                                title=\"Favourite\"\n                                data-id=\"{{id}}\"\n                                data-action=\"favouriteApllication\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                        {{/if}}\n                        {{#if isInBookmarks(id)}}\n                            <i\n                                class=\"fa fa-bookmark\"\n                                title=\"Bookmark\"\n                                data-action=\"removeFromBookmarks\"\n                                data-id=\"{{id}}\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                            {{else}}\n                            <i\n                                class=\"fa fa-bookmark-o\"\n                                title=\"Bookmark\"\n                                data-action=\"bookamrkApplication\"\n                                data-id=\"{{id}}\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                        {{/if}}\n                    {{/}}\n                </div>\n            </div>\n        </div>\n    {{/each}}\n\n</div>\n";
+},{"./listings.html":11,"ractive":118}],11:[function(require,module,exports){
+module.exports = "<div class=\"card\">\n    <div class=\"card-header\">\n        <h3>{{step}}</h3>\n    </div>\n\n    {{#each applications}}\n        <div class=\"job-application\">\n            <a role=\"button\" on-click=\"showApplicationDetail\" data-id=\"{{id}}\">{{position}}</a>\n            <p>{{name}}</p>\n            <p class=\"applied-at\">\n                <strong>Applied: </strong>{{applied}}\n            </p>\n\n            <div class=\"grid no-gutters\">\n                <p class=\"info\">\n                    <strong>Experience: </strong> {{experience}} years\n                </p>\n\n                <div class=\"availability\">\n                    <p><strong>Availability :</strong></p>\n                    <div class=\"day-tags\">\n                        <div class=\"grid\">\n                            {{#each availableOnDays}}\n                                <div class=\"tag\">{{this}}</div>\n                            {{/each}}\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"controls\">\n                <div class=\"grid\">\n                    {{#step == 'Favourites'}}\n                        <a role=\"button\" class=\"remove-btn\" data-id=\"{{id}}\" data-action=\"removeFromFavourites\" on-click=\"applicationEvent\">Remove</a>\n                    {{/}}\n                    {{#step == 'Bookmarks'}}\n                        <a role=\"button\" class=\"remove-btn\" data-id=\"{{id}}\" data-action=\"removeFromBookmarks\" on-click=\"applicationEvent\">Remove</a>\n                    {{/}}\n                    {{# step !== 'Favourites' && step !== 'Bookmarks' }}\n                        {{#if isInFavourites(id)}}\n                            <i\n                                class=\"fa fa-heart\"\n                                title=\"Favourite\"\n                                data-id=\"{{id}}\"\n                                data-action=\"removeFromFavourites\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                            {{else}}\n                            <i\n                                class=\"fa fa-heart-o\"\n                                title=\"Favourite\"\n                                data-id=\"{{id}}\"\n                                data-action=\"favouriteApllication\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                        {{/if}}\n                        {{#if isInBookmarks(id)}}\n                            <i\n                                class=\"fa fa-bookmark\"\n                                title=\"Bookmark\"\n                                data-action=\"removeFromBookmarks\"\n                                data-id=\"{{id}}\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                            {{else}}\n                            <i\n                                class=\"fa fa-bookmark-o\"\n                                title=\"Bookmark\"\n                                data-action=\"bookamrkApplication\"\n                                data-id=\"{{id}}\"\n                                on-click=\"applicationEvent\"\n                            >\n                            </i>\n                        {{/if}}\n                    {{/}}\n                </div>\n            </div>\n        </div>\n    {{/each}}\n\n</div>\n";
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -651,15 +845,30 @@ module.exports = Ractive.extend({
 
 
                 if (facetValue !== '') searchOnFacet({ facetValue: facetValue, facetType: facetType });
+            },
+            sortApplications: function sortApplications(e) {
+                var _get3 = this.get(),
+                    sortCriteria = _get3.sortCriteria,
+                    sortApplications = _get3.sortApplications;
+
+                sortApplications(sortCriteria);
+            },
+            chagneSortType: function chagneSortType(e) {
+                var _get4 = this.get(),
+                    sortCriteria = _get4.sortCriteria,
+                    sortApplications = _get4.sortApplications;
+
+                sortCriteria.type = e.node.getAttribute('data-type');
+                sortApplications(sortCriteria);
             }
         });
     }
 });
 
-},{"./sidebar.html":12,"ractive":117}],12:[function(require,module,exports){
-module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Filters</h3>\n    </div>\n\n    {{#each filterCriteria}}\n        <div class=\"searh-tag\" on-click=\"removeSearchTag\" data-tag-index=\"{{@index}}\">\n            <div>{{type}}: {{value}}</div>\n            <i class=\"fa fa-times\"></i>\n        </div>\n    {{/each}}\n\n    {{# facets.positions.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Position</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"position\">\n                    <option value=\"\">Select Position</option>\n                    {{#each facets.positions}}\n                        <option value=\"{{this}}\">{{this}}</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Availability</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"availability\">\n                <option value=\"\">Select Day</option>\n                <option value=\"M\">Monday</option>\n                <option value=\"T\">Tuesday</option>\n                <option value=\"W\">Wednesday</option>\n                <option value=\"Th\">Thursday</option>\n                <option value=\"F\">Friday</option>\n                <option value=\"S\">Saturday</option>\n                <option value=\"Su\">Sunday</option>\n            </select>\n        </div>\n    </div>\n\n\n    {{# facets.experience.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Experience</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"experience\">\n                    <option value=\"\">Select Experience</option>\n                    {{#each facets.experience}}\n                        <option value=\"{{this}}\">{{this}} Years</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n</div>\n";
+},{"./sidebar.html":13,"ractive":118}],13:[function(require,module,exports){
+module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Sort On</h3>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Sort</p>\n        </div>\n\n        <div class=\"desktop-seven tablet-seven mobile-seven\">\n            <select class=\"select-box\" on-change=\"sortApplications\" value=\"{{sortCriteria.on}}\">\n                <option value=\"appliedOn\">Applied On</option>\n                <option value=\"name\">Name</option>\n                <option value=\"experience\">Experience</option>\n                <option value=\"position\">Position</option>\n            </select>\n        </div>\n\n        <div class=\"desktop-one tablet-one mobile-one sort-control\">\n            {{# sortCriteria.type=='desc'}}\n                <i class=\"fa fa-arrow-up\" title=\"ascending\" data-type=\"asc\" on-click=\"chagneSortType\" aria-hidden=\"true\"></i>\n            {{/}}\n            {{# sortCriteria.type=='asc'}}\n                <i class=\"fa fa-arrow-down\" title=\"descending\" data-type=\"desc\" on-click=\"chagneSortType\" aria-hidden=\"true\"></i>\n            {{/}}\n        </div>\n    </div>\n\n    <div class=\"card-header\">\n        <h3>Filter On</h3>\n    </div>\n\n    {{#each filterCriteria}}\n        <div class=\"searh-tag\" on-click=\"removeSearchTag\" data-tag-index=\"{{@index}}\">\n            <div>{{type}}: {{value}}</div>\n            <i class=\"fa fa-times\"></i>\n        </div>\n    {{/each}}\n\n    {{# facets.positions.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Position</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"position\">\n                    <option value=\"\">Select Position</option>\n                    {{#each facets.positions}}\n                        <option value=\"{{this}}\">{{this}}</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Availability</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"availability\">\n                <option value=\"\">Select Day</option>\n                <option value=\"M\">Monday</option>\n                <option value=\"T\">Tuesday</option>\n                <option value=\"W\">Wednesday</option>\n                <option value=\"Th\">Thursday</option>\n                <option value=\"F\">Friday</option>\n                <option value=\"S\">Saturday</option>\n                <option value=\"Su\">Sunday</option>\n            </select>\n        </div>\n    </div>\n\n\n    {{# facets.experience.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Experience</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"experience\">\n                    <option value=\"\">Select Experience</option>\n                    {{#each facets.experience}}\n                        <option value=\"{{this}}\">{{this}} Years</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n</div>\n";
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -687,22 +896,18 @@ module.exports = Ractive.extend({
     }
 });
 
-},{"./tpl.html":14,"ractive":117}],14:[function(require,module,exports){
+},{"./tpl.html":15,"ractive":118}],15:[function(require,module,exports){
 module.exports = "<div class=\"nav\">\n    <div class=\"nav-item\">\n        <a href=\"/\" class=\"logo\">\n            jobportal\n        </a>\n    </div>\n\n    {{#each navLinks}}\n        <div class=\"nav-item\" on-click=\"changeLink\" data-link=\"{{this}}\">\n            <a role=\"button\" class=\"link {{# this===step}}active{{/}}\">\n                {{this}}\n            </a>\n        </div>\n    {{/each}}\n</div>\n";
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var $ = require('jquery');
 
-var $ = require('jquery'),
-    Ractive = require('ractive'),
-    ListingFactory = require('./services/listings')(),
-    ListingDataService = require('./services/data-service')(),
-    AdminService = require('./services/admin-services')();
+// app main component require
+require('./app');
 
-require('./styles/index.less');
-
+// sticky sidebar on desktop viewport
 $(window).on('scroll', function () {
 
     var viewPortScrolled = $(document).scrollTop(),
@@ -710,7 +915,7 @@ $(window).on('scroll', function () {
         sideBarEl = $('.sidebar'),
         sideBarParentWidth = sideBarEl.parent().width();
 
-    if (!viewPortWidth >= 991) return;
+    if (viewPortWidth <= 991) return;
 
     if (viewPortScrolled >= 50) {
         sideBarEl.css({ position: 'fixed', width: sideBarParentWidth });
@@ -720,168 +925,7 @@ $(window).on('scroll', function () {
     }
 });
 
-var jobComponent = new Ractive({
-    el: '[app-main-mount]',
-    template: require('./app.html'),
-    data: {
-        step: 'Applications'
-    },
-    components: {
-        navBar: require('./components/nav'),
-        sidebar: require('./components/filter_sidebar'),
-        listings: require('./components/application_listings'),
-        detailModal: require('./components/application-detail')
-    },
-
-    setSearchData: function setSearchData(filterCriteria) {
-        var self = this;
-
-        ListingFactory.getApplications(filterCriteria).then(function (searchData) {
-            self.set({
-                applications: ListingDataService.mapAvailabilityDays(searchData.results),
-                facets: searchData.facets,
-                filterCriteria: filterCriteria
-            });
-        }).catch(function (err) {
-            console.error('something went wrong ', err);
-        });
-    },
-    mapBookMarkedApps: function mapBookMarkedApps() {
-        var self = this;
-
-        var _self$get = self.get(),
-            bookmarks = _self$get.bookmarks;
-
-        var promises = bookmarks.map(function (bookmark) {
-            return ListingFactory.getApplicationDetail(bookmark);
-        });
-        Promise.all(promises).then(function (results) {
-            self.set('bookmarkedApps', results);
-        });
-    },
-    mapFavourites: function mapFavourites() {
-        var self = this;
-
-        var _self$get2 = self.get(),
-            favourites = _self$get2.favourites;
-
-        var promises = favourites.map(function (favourite) {
-            return ListingFactory.getApplicationDetail(favourite);
-        });
-        Promise.all(promises).then(function (results) {
-            self.set('favouriteApps', results);
-        });
-    },
-
-
-    onrender: RenderCtrl
-});
-
-function RenderCtrl() {
-    var self = this;
-
-    // get all applications on render
-    var promises = [ListingFactory.getApplications([]), AdminService.getBookmarks(), AdminService.getFavourites()];
-
-    Promise.all(promises).then(function (replies) {
-        var searchData = void 0,
-            bookmarks = void 0,
-            favourites = void 0;
-
-        var _replies = _slicedToArray(replies, 3);
-
-        searchData = _replies[0];
-        bookmarks = _replies[1];
-        favourites = _replies[2];
-
-        console.log('see search data here ', searchData);
-        self.set({
-            applications: ListingDataService.mapAvailabilityDays(searchData.results),
-            bookmarks: bookmarks,
-            favourites: favourites,
-            filterCriteria: [],
-            facets: searchData.facets,
-            showDetailModal: false
-        });
-    }).catch(function (err) {
-        console.error('Error while fetching data ', err);
-    });
-
-    self.set({
-        methods: {
-            searchOnFacet: function searchOnFacet(_ref) {
-                var facetType = _ref.facetType,
-                    facetValue = _ref.facetValue;
-
-                var _self$get3 = self.get(),
-                    filterCriteria = _self$get3.filterCriteria;
-
-                var criteriaWithType = filterCriteria.find(function (criteria) {
-                    return criteria.type === facetType && criteria.value === facetValue;
-                });
-                if (!criteriaWithType || typeof criteriaWithType === 'undefined') {
-                    filterCriteria.push({ type: facetType, value: facetValue });
-                    self.setSearchData(filterCriteria);
-                }
-            },
-            removeSearchTag: function removeSearchTag(id) {
-                var _self$get4 = self.get(),
-                    filterCriteria = _self$get4.filterCriteria;
-
-                filterCriteria.splice(id, 1);
-                self.setSearchData(filterCriteria);
-            },
-            bookmarkApplication: function bookmarkApplication(id) {
-                AdminService.setBookmark(id).then(function (bookmarks) {
-                    self.set('bookmarks', bookmarks);
-                    self.mapBookMarkedApps();
-                }).catch(function (err) {
-                    console.error('Something went wrong ', err);
-                });
-            },
-            favouriteApplication: function favouriteApplication(id) {
-                AdminService.setFavourite(id).then(function (favourites) {
-                    self.set('favourites', favourites);
-                    self.mapFavourites();
-                }).catch(function (err) {
-                    console.error('Something went wrong ', err);
-                });
-            },
-            removeAppFromBookmarks: function removeAppFromBookmarks(id) {
-                AdminService.removeBookmark(id).then(function (bookmarks) {
-                    self.set('bookmarks', bookmarks);
-                    self.mapBookMarkedApps();
-                }).catch(function (err) {
-                    console.error('Something went wrong ', err);
-                });
-            },
-            removeAppFromFavourites: function removeAppFromFavourites(id) {
-                AdminService.removeFavourite(id).then(function (favourites) {
-                    self.set('favourites', favourites);
-                    self.mapFavourites();
-                }).catch(function (err) {
-                    console.error('Something went wrong ', err);
-                });
-            },
-            displayApplicationDetail: function displayApplicationDetail(id) {
-                var _self$get5 = self.get(),
-                    applications = _self$get5.applications;
-
-                self.set({
-                    showDetailModal: true,
-                    appDetail: applications.find(function (application) {
-                        return application.id === id;
-                    })
-                });
-            },
-            hideDetailModal: function hideDetailModal() {
-                self.set('showDetailModal', false);
-            }
-        }
-    });
-}
-
-},{"./app.html":6,"./components/application-detail":8,"./components/application_listings":9,"./components/filter_sidebar":11,"./components/nav":13,"./services/admin-services":137,"./services/data-service":138,"./services/listings":139,"./styles/index.less":140,"jquery":53,"ractive":117}],16:[function(require,module,exports){
+},{"./app":7,"jquery":54}],17:[function(require,module,exports){
 (function (process,__filename){
 /** vim: et:ts=4:sw=4:sts=4
  * @license amdefine 1.0.1 Copyright (c) 2011-2016, The Dojo Foundation All Rights Reserved.
@@ -1186,7 +1230,7 @@ function amdefine(module, requireFn) {
 module.exports = amdefine;
 
 }).call(this,require('_process'),"/node_modules/amdefine/amdefine.js")
-},{"_process":5,"path":4}],17:[function(require,module,exports){
+},{"_process":5,"path":4}],18:[function(require,module,exports){
 module.exports = function (css, customDocument) {
   var doc = customDocument || document;
   if (doc.createStyleSheet) {
@@ -1225,7 +1269,7 @@ module.exports.byUrl = function(url) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var Handlebars = require('handlebars');
 var fecha = require('fecha');
 var numbro = require('numbro');
@@ -1269,7 +1313,7 @@ var dummyjson = {
 
 module.exports = dummyjson;
 
-},{"./lib/helpers":19,"./lib/mockdata":20,"./lib/utils":21,"fecha":22,"handlebars":52,"numbro":116}],19:[function(require,module,exports){
+},{"./lib/helpers":20,"./lib/mockdata":21,"./lib/utils":22,"fecha":23,"handlebars":53,"numbro":117}],20:[function(require,module,exports){
 var os = require('os');
 var Handlebars = require('handlebars');
 var numbro = require('numbro');
@@ -1723,7 +1767,7 @@ var helpers = {
 
 module.exports = helpers;
 
-},{"./utils":21,"fecha":22,"handlebars":52,"numbro":116,"os":3}],20:[function(require,module,exports){
+},{"./utils":22,"fecha":23,"handlebars":53,"numbro":117,"os":3}],21:[function(require,module,exports){
 var titles = [
   'Mr', 'Mrs', 'Dr', 'Prof', 'Lord', 'Lady', 'Sir', 'Madam'
 ];
@@ -1934,7 +1978,7 @@ module.exports = {
   lorem: lorem
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var seedrandom = require('seedrandom');
 
 // Create an instance of the prng without a seed (so it'll be a random sequence every time)
@@ -1980,7 +2024,7 @@ var utils = {
 
 module.exports = utils;
 
-},{"seedrandom":118}],22:[function(require,module,exports){
+},{"seedrandom":119}],23:[function(require,module,exports){
 (function (main) {
   'use strict';
 
@@ -2250,7 +2294,7 @@ module.exports = utils;
   }
 })(this);
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2317,7 +2361,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars.runtime":24,"./handlebars/compiler/ast":26,"./handlebars/compiler/base":27,"./handlebars/compiler/compiler":29,"./handlebars/compiler/javascript-compiler":31,"./handlebars/compiler/visitor":34,"./handlebars/no-conflict":48}],24:[function(require,module,exports){
+},{"./handlebars.runtime":25,"./handlebars/compiler/ast":27,"./handlebars/compiler/base":28,"./handlebars/compiler/compiler":30,"./handlebars/compiler/javascript-compiler":32,"./handlebars/compiler/visitor":35,"./handlebars/no-conflict":49}],25:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2385,7 +2429,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":25,"./handlebars/exception":38,"./handlebars/no-conflict":48,"./handlebars/runtime":49,"./handlebars/safe-string":50,"./handlebars/utils":51}],25:[function(require,module,exports){
+},{"./handlebars/base":26,"./handlebars/exception":39,"./handlebars/no-conflict":49,"./handlebars/runtime":50,"./handlebars/safe-string":51,"./handlebars/utils":52}],26:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2491,7 +2535,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":36,"./exception":38,"./helpers":39,"./logger":47,"./utils":51}],26:[function(require,module,exports){
+},{"./decorators":37,"./exception":39,"./helpers":40,"./logger":48,"./utils":52}],27:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2524,7 +2568,7 @@ exports['default'] = AST;
 module.exports = exports['default'];
 
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2574,7 +2618,7 @@ function parse(input, options) {
 }
 
 
-},{"../utils":51,"./helpers":30,"./parser":32,"./whitespace-control":35}],28:[function(require,module,exports){
+},{"../utils":52,"./helpers":31,"./parser":33,"./whitespace-control":36}],29:[function(require,module,exports){
 /* global define */
 'use strict';
 
@@ -2742,7 +2786,7 @@ exports['default'] = CodeGen;
 module.exports = exports['default'];
 
 
-},{"../utils":51,"source-map":126}],29:[function(require,module,exports){
+},{"../utils":52,"source-map":127}],30:[function(require,module,exports){
 /* eslint-disable new-cap */
 
 'use strict';
@@ -3317,7 +3361,7 @@ function transformLiteralToPath(sexpr) {
 }
 
 
-},{"../exception":38,"../utils":51,"./ast":26}],30:[function(require,module,exports){
+},{"../exception":39,"../utils":52,"./ast":27}],31:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3549,7 +3593,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 }
 
 
-},{"../exception":38}],31:[function(require,module,exports){
+},{"../exception":39}],32:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4679,7 +4723,7 @@ exports['default'] = JavaScriptCompiler;
 module.exports = exports['default'];
 
 
-},{"../base":25,"../exception":38,"../utils":51,"./code-gen":28}],32:[function(require,module,exports){
+},{"../base":26,"../exception":39,"../utils":52,"./code-gen":29}],33:[function(require,module,exports){
 // File ignored in coverage tests via setting in .istanbul.yml
 /* Jison generated parser */
 "use strict";
@@ -5420,7 +5464,7 @@ var handlebars = (function () {
 module.exports = exports["default"];
 
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /* eslint-disable new-cap */
 'use strict';
 
@@ -5608,7 +5652,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 /* eslint-enable new-cap */
 
 
-},{"./visitor":34}],34:[function(require,module,exports){
+},{"./visitor":35}],35:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5750,7 +5794,7 @@ exports['default'] = Visitor;
 module.exports = exports['default'];
 
 
-},{"../exception":38}],35:[function(require,module,exports){
+},{"../exception":39}],36:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5973,7 +6017,7 @@ exports['default'] = WhitespaceControl;
 module.exports = exports['default'];
 
 
-},{"./visitor":34}],36:[function(require,module,exports){
+},{"./visitor":35}],37:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5991,7 +6035,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":37}],37:[function(require,module,exports){
+},{"./decorators/inline":38}],38:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6022,7 +6066,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":51}],38:[function(require,module,exports){
+},{"../utils":52}],39:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6078,7 +6122,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6126,7 +6170,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":40,"./helpers/each":41,"./helpers/helper-missing":42,"./helpers/if":43,"./helpers/log":44,"./helpers/lookup":45,"./helpers/with":46}],40:[function(require,module,exports){
+},{"./helpers/block-helper-missing":41,"./helpers/each":42,"./helpers/helper-missing":43,"./helpers/if":44,"./helpers/log":45,"./helpers/lookup":46,"./helpers/with":47}],41:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6167,7 +6211,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":51}],41:[function(require,module,exports){
+},{"../utils":52}],42:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6263,7 +6307,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":38,"../utils":51}],42:[function(require,module,exports){
+},{"../exception":39,"../utils":52}],43:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6290,7 +6334,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":38}],43:[function(require,module,exports){
+},{"../exception":39}],44:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6321,7 +6365,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":51}],44:[function(require,module,exports){
+},{"../utils":52}],45:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6349,7 +6393,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6363,7 +6407,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6398,7 +6442,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":51}],47:[function(require,module,exports){
+},{"../utils":52}],48:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6447,7 +6491,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{"./utils":51}],48:[function(require,module,exports){
+},{"./utils":52}],49:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -6471,7 +6515,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6780,7 +6824,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":25,"./exception":38,"./utils":51}],50:[function(require,module,exports){
+},{"./base":26,"./exception":39,"./utils":52}],51:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -6797,7 +6841,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6923,7 +6967,7 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 /* eslint-disable no-var */
@@ -6950,7 +6994,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions['.hbs'] = extension;
 }
 
-},{"../dist/cjs/handlebars":23,"../dist/cjs/handlebars/compiler/printer":33,"fs":2}],53:[function(require,module,exports){
+},{"../dist/cjs/handlebars":24,"../dist/cjs/handlebars/compiler/printer":34,"fs":2}],54:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -17205,10 +17249,10 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 module.exports = require('cssify');
 
-},{"cssify":17}],55:[function(require,module,exports){
+},{"cssify":18}],56:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Bulgarian
@@ -17248,7 +17292,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Czech
@@ -17300,7 +17344,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Danish
@@ -17351,7 +17395,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17392,7 +17436,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17443,7 +17487,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17497,7 +17541,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -17548,7 +17592,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Greek (el)
@@ -17588,7 +17632,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17643,7 +17687,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17698,7 +17742,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /*!
 + * numbro.js language configuration
  * language : English
@@ -17743,7 +17787,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17798,7 +17842,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -17853,7 +17897,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17909,7 +17953,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -17965,7 +18009,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18021,7 +18065,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18077,7 +18121,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18133,7 +18177,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18189,7 +18233,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18245,7 +18289,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18301,7 +18345,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -18357,7 +18401,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Estonian
@@ -18411,7 +18455,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Farsi
@@ -18452,7 +18496,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Finnish
@@ -18503,7 +18547,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Filipino (Pilipino)
@@ -18548,7 +18592,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -18600,7 +18644,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -18651,7 +18695,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -18702,7 +18746,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Hebrew
@@ -18751,7 +18795,7 @@ module.exports = require('cssify');
 }.call(typeof window === 'undefined' ? this : window));
 
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Hungarian
@@ -18802,7 +18846,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Indonesian
@@ -18842,7 +18886,7 @@ module.exports = require('cssify');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /* jshint sub: true */
 exports['bg'] = require('./bg.js');
 exports['cs-CZ'] = require('./cs-CZ.js');
@@ -18904,7 +18948,7 @@ exports['zh-CN'] = require('./zh-CN.js');
 exports['zh-MO'] = require('./zh-MO.js');
 exports['zh-SG'] = require('./zh-SG.js');
 exports['zh-TW'] = require('./zh-TW.js');
-},{"./bg.js":55,"./cs-CZ.js":56,"./da-DK.js":57,"./de-AT.js":58,"./de-CH.js":59,"./de-DE.js":60,"./de-LI.js":61,"./el.js":62,"./en-AU.js":63,"./en-GB.js":64,"./en-IE.js":65,"./en-NZ.js":66,"./en-ZA.js":67,"./es-AR.js":68,"./es-CL.js":69,"./es-CO.js":70,"./es-CR.js":71,"./es-ES.js":72,"./es-NI.js":73,"./es-PE.js":74,"./es-PR.js":75,"./es-SV.js":76,"./et-EE.js":77,"./fa-IR.js":78,"./fi-FI.js":79,"./fil-PH.js":80,"./fr-CA.js":81,"./fr-CH.js":82,"./fr-FR.js":83,"./he-IL.js":84,"./hu-HU.js":85,"./id.js":86,"./it-CH.js":88,"./it-IT.js":89,"./ja-JP.js":90,"./ko-KR.js":91,"./lv-LV.js":92,"./nb-NO.js":93,"./nb.js":94,"./nl-BE.js":95,"./nl-NL.js":96,"./nn.js":97,"./pl-PL.js":98,"./pt-BR.js":99,"./pt-PT.js":100,"./ro-RO.js":101,"./ro.js":102,"./ru-RU.js":103,"./ru-UA.js":104,"./sk-SK.js":105,"./sl.js":106,"./sr-Cyrl-RS.js":107,"./sv-SE.js":108,"./th-TH.js":109,"./tr-TR.js":110,"./uk-UA.js":111,"./zh-CN.js":112,"./zh-MO.js":113,"./zh-SG.js":114,"./zh-TW.js":115}],88:[function(require,module,exports){
+},{"./bg.js":56,"./cs-CZ.js":57,"./da-DK.js":58,"./de-AT.js":59,"./de-CH.js":60,"./de-DE.js":61,"./de-LI.js":62,"./el.js":63,"./en-AU.js":64,"./en-GB.js":65,"./en-IE.js":66,"./en-NZ.js":67,"./en-ZA.js":68,"./es-AR.js":69,"./es-CL.js":70,"./es-CO.js":71,"./es-CR.js":72,"./es-ES.js":73,"./es-NI.js":74,"./es-PE.js":75,"./es-PR.js":76,"./es-SV.js":77,"./et-EE.js":78,"./fa-IR.js":79,"./fi-FI.js":80,"./fil-PH.js":81,"./fr-CA.js":82,"./fr-CH.js":83,"./fr-FR.js":84,"./he-IL.js":85,"./hu-HU.js":86,"./id.js":87,"./it-CH.js":89,"./it-IT.js":90,"./ja-JP.js":91,"./ko-KR.js":92,"./lv-LV.js":93,"./nb-NO.js":94,"./nb.js":95,"./nl-BE.js":96,"./nl-NL.js":97,"./nn.js":98,"./pl-PL.js":99,"./pt-BR.js":100,"./pt-PT.js":101,"./ro-RO.js":102,"./ro.js":103,"./ru-RU.js":104,"./ru-UA.js":105,"./sk-SK.js":106,"./sl.js":107,"./sr-Cyrl-RS.js":108,"./sv-SE.js":109,"./th-TH.js":110,"./tr-TR.js":111,"./uk-UA.js":112,"./zh-CN.js":113,"./zh-MO.js":114,"./zh-SG.js":115,"./zh-TW.js":116}],89:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Italian
@@ -18945,7 +18989,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Italian
@@ -18996,7 +19040,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],90:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Japanese
@@ -19047,7 +19091,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Korean
@@ -19088,7 +19132,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Latvian
@@ -19138,7 +19182,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],93:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language: Norwegian Bokmål
@@ -19186,7 +19230,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],94:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Norwegian Bokmål (nb)
@@ -19226,7 +19270,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Dutch
@@ -19278,7 +19322,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Dutch
@@ -19330,7 +19374,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Norwegian Nynorsk (nn)
@@ -19370,7 +19414,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Polish
@@ -19421,7 +19465,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],99:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Portuguese
@@ -19472,7 +19516,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Portuguese
@@ -19523,7 +19567,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /*!
  * numeral.js language configuration
  * language : Romanian
@@ -19573,7 +19617,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Romanian (ro)
@@ -19613,7 +19657,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Russian
@@ -19667,7 +19711,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Russian
@@ -19721,7 +19765,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],105:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Slovak
@@ -19773,7 +19817,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Slovene
@@ -19814,7 +19858,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],107:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Serbian (sr)
@@ -19855,7 +19899,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],108:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Swedish
@@ -19903,7 +19947,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],109:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Thai
@@ -19954,7 +19998,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],110:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Turkish
@@ -20040,7 +20084,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Ukrainian
@@ -20094,7 +20138,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : simplified chinese
@@ -20145,7 +20189,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese traditional
@@ -20186,7 +20230,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }());
 
-},{}],114:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese simplified
@@ -20227,7 +20271,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],115:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese (Taiwan)
@@ -20268,7 +20312,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],116:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 (function (process){
 /*!
  * numbro.js
@@ -21565,7 +21609,7 @@ exports['zh-TW'] = require('./zh-TW.js');
 }.call(typeof window === 'undefined' ? this : window));
 
 }).call(this,require('_process'))
-},{"./languages":87,"_process":5}],117:[function(require,module,exports){
+},{"./languages":88,"_process":5}],118:[function(require,module,exports){
 (function (global){
 /*
 	Ractive.js v0.9.2
@@ -38002,7 +38046,7 @@ return Ractive;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 // A library of seedable RNGs implemented in Javascript.
 //
 // Usage:
@@ -38064,7 +38108,7 @@ sr.tychei = tychei;
 
 module.exports = sr;
 
-},{"./lib/alea":119,"./lib/tychei":120,"./lib/xor128":121,"./lib/xor4096":122,"./lib/xorshift7":123,"./lib/xorwow":124,"./seedrandom":125}],119:[function(require,module,exports){
+},{"./lib/alea":120,"./lib/tychei":121,"./lib/xor128":122,"./lib/xor4096":123,"./lib/xorshift7":124,"./lib/xorwow":125,"./seedrandom":126}],120:[function(require,module,exports){
 // A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
 // http://baagoe.com/en/RandomMusings/javascript/
 // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
@@ -38180,7 +38224,7 @@ if (module && module.exports) {
 
 
 
-},{}],120:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 // A Javascript implementaion of the "Tyche-i" prng algorithm by
 // Samuel Neves and Filipe Araujo.
 // See https://eden.dei.uc.pt/~sneves/pubs/2011-snfa2.pdf
@@ -38285,7 +38329,7 @@ if (module && module.exports) {
 
 
 
-},{}],121:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 // A Javascript implementaion of the "xor128" prng algorithm by
 // George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
 
@@ -38368,7 +38412,7 @@ if (module && module.exports) {
 
 
 
-},{}],122:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 // A Javascript implementaion of Richard Brent's Xorgens xor4096 algorithm.
 //
 // This fast non-cryptographic random number generator is designed for
@@ -38516,7 +38560,7 @@ if (module && module.exports) {
   (typeof define) == 'function' && define   // present with an AMD loader
 );
 
-},{}],123:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 // A Javascript implementaion of the "xorshift7" algorithm by
 // François Panneton and Pierre L'ecuyer:
 // "On the Xorgshift Random Number Generators"
@@ -38615,7 +38659,7 @@ if (module && module.exports) {
 );
 
 
-},{}],124:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 // A Javascript implementaion of the "xorwow" prng algorithm by
 // George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
 
@@ -38703,7 +38747,7 @@ if (module && module.exports) {
 
 
 
-},{}],125:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 /*
 Copyright 2014 David Bau.
 
@@ -38952,7 +38996,7 @@ if ((typeof module) == 'object' && module.exports) {
   Math    // math: package containing random, pow, and seedrandom
 );
 
-},{"crypto":1}],126:[function(require,module,exports){
+},{"crypto":1}],127:[function(require,module,exports){
 /*
  * Copyright 2009-2011 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.txt or:
@@ -38962,7 +39006,7 @@ exports.SourceMapGenerator = require('./source-map/source-map-generator').Source
 exports.SourceMapConsumer = require('./source-map/source-map-consumer').SourceMapConsumer;
 exports.SourceNode = require('./source-map/source-node').SourceNode;
 
-},{"./source-map/source-map-consumer":133,"./source-map/source-map-generator":134,"./source-map/source-node":135}],127:[function(require,module,exports){
+},{"./source-map/source-map-consumer":134,"./source-map/source-map-generator":135,"./source-map/source-node":136}],128:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39071,7 +39115,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":136,"amdefine":16}],128:[function(require,module,exports){
+},{"./util":137,"amdefine":17}],129:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39219,7 +39263,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./base64":129,"amdefine":16}],129:[function(require,module,exports){
+},{"./base64":130,"amdefine":17}],130:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39294,7 +39338,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":16}],130:[function(require,module,exports){
+},{"amdefine":17}],131:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39413,7 +39457,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":16}],131:[function(require,module,exports){
+},{"amdefine":17}],132:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2014 Mozilla Foundation and contributors
@@ -39501,7 +39545,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":136,"amdefine":16}],132:[function(require,module,exports){
+},{"./util":137,"amdefine":17}],133:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -39623,7 +39667,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":16}],133:[function(require,module,exports){
+},{"amdefine":17}],134:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -40702,7 +40746,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":127,"./base64-vlq":128,"./binary-search":130,"./quick-sort":132,"./util":136,"amdefine":16}],134:[function(require,module,exports){
+},{"./array-set":128,"./base64-vlq":129,"./binary-search":131,"./quick-sort":133,"./util":137,"amdefine":17}],135:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -41103,7 +41147,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":127,"./base64-vlq":128,"./mapping-list":131,"./util":136,"amdefine":16}],135:[function(require,module,exports){
+},{"./array-set":128,"./base64-vlq":129,"./mapping-list":132,"./util":137,"amdefine":17}],136:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -41519,7 +41563,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./source-map-generator":134,"./util":136,"amdefine":16}],136:[function(require,module,exports){
+},{"./source-map-generator":135,"./util":137,"amdefine":17}],137:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -41891,7 +41935,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":16}],137:[function(require,module,exports){
+},{"amdefine":17}],138:[function(require,module,exports){
 "use strict";
 
 /**
@@ -41959,7 +42003,7 @@ var adminService = function adminService() {
 
 module.exports = adminService;
 
-},{}],138:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 "use strict";
 
 /**
@@ -42009,8 +42053,10 @@ var formatListingData = function formatListingData() {
 
 module.exports = formatListingData;
 
-},{}],139:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /**
  *
@@ -42063,6 +42109,9 @@ var jobPortalFactory = function jobPortalFactory() {
         sortText: function sortText(a, b) {
             return a.toLowerCase().localeCompare(b.toLowerCase());
         },
+        sortAppliedOn: function sortAppliedOn(a, b) {
+            return new Date(a.applied) - new Date(b.applied);
+        },
         sortIntegers: function sortIntegers(a, b) {
             return parseInt(a) - parseInt(b);
         }
@@ -42079,7 +42128,7 @@ var jobPortalFactory = function jobPortalFactory() {
                 }).filter(utils.onlyUnique).sort(utils.sortIntegers)
             };
         },
-        getApplications: function getApplications(filters, resultsBy) {
+        getApplications: function getApplications(filters, sortCriteria) {
             var self = this;
             return new Promise(function (resolve, reject) {
 
@@ -42106,8 +42155,26 @@ var jobPortalFactory = function jobPortalFactory() {
 
                 var filteredResults = results.filter(filterOnFacet('position')).filter(filterOnFacet('experience')).filter(filterOnFacet('availability'));
 
+                var sortedResults = filteredResults;
+
+                if ((typeof sortCriteria === 'undefined' ? 'undefined' : _typeof(sortCriteria)) === 'object') {
+                    if (sortCriteria.on === 'appliedOn') sortedResults = sortedResults.sort(function (a, b) {
+                        return new Date(a.applied) - new Date(b.applied);
+                    });
+                    if (sortCriteria.on === 'experience') sortedResults = sortedResults.sort(function (a, b) {
+                        return parseInt(a.experience) - parseInt(b.experience);
+                    });
+                    if (sortCriteria.on === 'name') sortedResults = sortedResults.sort(function (a, b) {
+                        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                    });
+                    if (sortCriteria.on === 'position') sortedResults = sortedResults.sort(function (a, b) {
+                        return a.position.toLowerCase().localeCompare(b.position.toLowerCase());
+                    });
+                    if (sortCriteria.type === 'desc') sortedResults = sortedResults.reverse();
+                }
+
                 resolve({
-                    results: filteredResults,
+                    results: sortedResults,
                     facets: self.getSearchFacets(filteredResults)
                 });
             });
@@ -42125,9 +42192,9 @@ var jobPortalFactory = function jobPortalFactory() {
 
 module.exports = jobPortalFactory;
 
-},{"../utils/fake-json":141}],140:[function(require,module,exports){
-var css = "* {\n  box-sizing: border-box;\n}\n.grid {\n  display: flex;\n  flex-flow: row wrap;\n  justify-content: inherit;\n  align-items: flex-start;\n  width: 100% !important;\n  padding: 0;\n}\n[class*='desktop-'],\n[class*='tablet-'],\n[class*='phone-'] {\n  margin: 0 0.5% 10px 0.5%;\n}\n.no-gutters [class*='desktop-'],\n.no-gutters [class*='tablet-'],\n.no-gutters [class*='phone-'] {\n  margin: 0 0 10px 0;\n}\n.relaxed-gutters [class*='desktop-'],\n.relaxed-gutters [class*='tablet-'],\n.relaxed-gutters [class*='phone-'] {\n  margin: 0 1% 10px 1%;\n}\n@media (min-width: 991px) {\n  .hidden-desktop {\n    display: none;\n  }\n  .desktop-one {\n    flex-basis: 7.33333333%;\n  }\n  .desktop-two {\n    flex-basis: 15.66666667%;\n  }\n  .desktop-three {\n    flex-basis: 24%;\n  }\n  .desktop-four {\n    flex-basis: 32.33333333%;\n  }\n  .desktop-five {\n    flex-basis: 40.66666667%;\n  }\n  .desktop-six {\n    flex-basis: 49%;\n  }\n  .desktop-seven {\n    flex-basis: 57.33333333%;\n  }\n  .desktop-eight {\n    flex-basis: 65.66666667%;\n  }\n  .desktop-nine {\n    flex-basis: 74%;\n  }\n  .desktop-ten {\n    flex-basis: 82.33333333%;\n  }\n  .desktop-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .desktop-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .desktop-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .desktop-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .desktop-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .desktop-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .desktop-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .desktop-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .desktop-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .desktop-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .desktop-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .desktop-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .desktop-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .desktop-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .desktop-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .desktop-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .desktop-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .desktop-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .desktop-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .desktop-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .desktop-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .desktop-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .desktop-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .desktop-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .desktop-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .desktop-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 991px) {\n  .hidden-tablet {\n    display: none;\n  }\n  .tablet-one {\n    flex-basis: 7.33333333%;\n  }\n  .tablet-two {\n    flex-basis: 15.66666667%;\n  }\n  .tablet-three {\n    flex-basis: 24%;\n  }\n  .tablet-four {\n    flex-basis: 32.33333333%;\n  }\n  .tablet-five {\n    flex-basis: 40.66666667%;\n  }\n  .tablet-six {\n    flex-basis: 49%;\n  }\n  .tablet-seven {\n    flex-basis: 57.33333333%;\n  }\n  .tablet-eight {\n    flex-basis: 65.66666667%;\n  }\n  .tablet-nine {\n    flex-basis: 74%;\n  }\n  .tablet-ten {\n    flex-basis: 82.33333333%;\n  }\n  .tablet-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .tablet-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .tablet-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .tablet-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .tablet-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .tablet-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .tablet-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .tablet-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .tablet-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .tablet-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .tablet-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .tablet-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .tablet-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .tablet-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .tablet-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .tablet-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .tablet-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .tablet-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .tablet-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .tablet-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .tablet-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .tablet-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .tablet-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .tablet-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .tablet-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .tablet-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 661px) {\n  .hidden-phone {\n    display: none;\n  }\n  .phone-one {\n    flex-basis: 7.33333333%;\n  }\n  .phone-two {\n    flex-basis: 15.66666667%;\n  }\n  .phone-three {\n    flex-basis: 24%;\n  }\n  .phone-four {\n    flex-basis: 32.33333333%;\n  }\n  .phone-five {\n    flex-basis: 40.66666667%;\n  }\n  .phone-six {\n    flex-basis: 49%;\n  }\n  .phone-seven {\n    flex-basis: 57.33333333%;\n  }\n  .phone-eight {\n    flex-basis: 65.66666667%;\n  }\n  .phone-nine {\n    flex-basis: 74%;\n  }\n  .phone-ten {\n    flex-basis: 82.33333333%;\n  }\n  .phone-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .phone-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .phone-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .phone-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .phone-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .phone-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .phone-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .phone-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .phone-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .phone-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .phone-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .phone-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .phone-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .phone-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .phone-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .phone-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .phone-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .phone-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .phone-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .phone-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .phone-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .phone-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .phone-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .phone-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .phone-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .phone-twelve {\n    flex-basis: 98%;\n  }\n}\n.center {\n  justify-content: center !important;\n}\n.skeleton {\n  height: 25px;\n  width: 80%;\n  background-color: rgba(0, 0, 0, 0.15);\n  display: block;\n  margin: 27px auto;\n}\n.sky-blue {\n  background: #92AFD7;\n}\n.dark-blue {\n  background: #5A7684;\n}\n.nav {\n  position: fixed;\n  display: flex;\n  left: 0;\n  top: 0;\n  width: 100%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  background: #fff;\n  z-index: 1020;\n  padding: 10px 20px 10px 20px;\n}\n.nav .nav-item {\n  padding: 0 10px 0 10px;\n}\n.nav .nav-item .link {\n  line-height: 23px;\n  padding-bottom: 12px;\n  color: #404040;\n  font-size: 14px;\n}\n.nav .nav-item .link:hover {\n  color: #0CAA41;\n  border-bottom: 3px solid #0CAA41;\n}\n.nav .nav-item .active {\n  border-bottom: 3px solid #0CAA41;\n}\n.nav .logo {\n  color: #0CAA41;\n  font-size: 1.2rem;\n  font-weight: bold;\n  padding-right: 20px;\n}\n.listings {\n  margin-top: 80px;\n}\n.listings p,\n.listings h2,\n.listings h3,\n.listings h5 {\n  color: #404040;\n}\n.listings h2 {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  font-size: 1.2em;\n}\n.listings .card {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n}\n.listings .card-header {\n  margin-bottom: 16px;\n  border-bottom: 1px solid #DEDEDE;\n}\n.listings .card-header h3 {\n  font-size: 1rem;\n  line-height: 1;\n}\n.listings .job-application {\n  border-bottom: 1px solid #c2c2c2;\n  padding: 10px;\n}\n.listings .job-application:last-child {\n  border-bottom: none;\n}\n.listings .job-application a {\n  color: #1861bf;\n  font-weight: bold;\n}\n.listings .job-application p {\n  line-height: 0;\n}\n.listings .job-application .applied-at {\n  font-size: 0.9em;\n}\n@media (min-width: 991px) {\n  .listings .job-application .applied-at {\n    float: right;\n    margin-top: -41px;\n  }\n}\n@media (max-width: 991px) {\n  .listings .job-application .applied-at {\n    line-height: 1;\n  }\n}\n.listings .job-application .info {\n  font-size: 0.85em;\n  margin-right: 10px;\n}\n.listings .job-application .availability p,\n.listings .job-application .availability .day-tags {\n  font-size: 0.85em;\n  display: inline-block;\n  float: left;\n}\n.listings .job-application .availability .day-tags {\n  margin: 3px 0 0 5px;\n}\n.listings .job-application .availability .day-tags .tag {\n  font-size: 0.65em;\n  padding: 6px;\n  font-weight: bold;\n  margin: 0 5px 0 5px;\n  color: white;\n  background: #0CAA41;\n}\n.listings .job-application .controls {\n  font-size: 1.5rem;\n}\n@media (min-width: 991px) {\n  .listings .job-application .controls {\n    float: right;\n    margin-top: -31px;\n  }\n}\n.listings .job-application .controls i {\n  margin-right: 15px;\n  cursor: pointer;\n  color: #0CAA41;\n}\n.listings .job-application .controls i:last-child {\n  margin-right: 0px;\n}\n.listings .job-application .controls .remove-btn {\n  font-weight: 400;\n  font-size: 0.7em;\n}\n.listings .sidebar {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n  min-height: 270px;\n}\n.listings .sidebar .facet {\n  margin: 10px 0 10px 0;\n}\n.listings .sidebar .facet p {\n  font-size: 0.8rem;\n  vertical-align: middle;\n  margin-top: 10px;\n}\n.listings .sidebar .facet .select-box {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n  font-size: 0.8rem;\n  padding: 8px;\n}\n.listings .sidebar .searh-tag {\n  padding: 10px;\n  margin-bottom: 10px;\n  font-size: 0.8rem;\n  border-radius: 3px;\n  background: #0CAA41;\n  color: white;\n  font-weight: bold;\n  cursor: pointer;\n}\n.listings .sidebar .searh-tag i {\n  float: right;\n  margin-top: -13px;\n}\n.application-detail-modal {\n  border-bottom: 1px solid #c2c2c2;\n  padding: 10px;\n  padding-top: 5px;\n}\n.application-detail-modal:last-child {\n  border-bottom: none;\n}\n.application-detail-modal a {\n  color: #1861bf;\n  font-weight: bold;\n}\n.application-detail-modal p {\n  line-height: 0;\n}\n.application-detail-modal .applied-at {\n  font-size: 0.9em;\n}\n@media (min-width: 991px) {\n  .application-detail-modal .applied-at {\n    float: right;\n    margin-top: -41px;\n  }\n}\n@media (max-width: 991px) {\n  .application-detail-modal .applied-at {\n    line-height: 1;\n  }\n}\n.application-detail-modal .info {\n  font-size: 0.85em;\n  margin-right: 10px;\n}\n.application-detail-modal .availability p,\n.application-detail-modal .availability .day-tags {\n  font-size: 0.85em;\n  display: inline-block;\n  float: left;\n}\n.application-detail-modal .availability .day-tags {\n  margin: 3px 0 0 5px;\n}\n.application-detail-modal .availability .day-tags .tag {\n  font-size: 0.65em;\n  padding: 6px;\n  font-weight: bold;\n  margin: 0 5px 0 5px;\n  color: white;\n  background: #0CAA41;\n}\n.application-detail-modal .controls {\n  font-size: 1.5rem;\n}\n@media (min-width: 991px) {\n  .application-detail-modal .controls {\n    float: right;\n    margin-top: -31px;\n  }\n}\n.application-detail-modal .controls i {\n  margin-right: 15px;\n  cursor: pointer;\n  color: #0CAA41;\n}\n.application-detail-modal .controls i:last-child {\n  margin-right: 0px;\n}\n.application-detail-modal .controls .remove-btn {\n  font-weight: 400;\n  font-size: 0.7em;\n}\n.application-detail-modal .question {\n  margin-bottom: 15px;\n  border: 1px solid #9c9c9c;\n  border-radius: 3px;\n  font-size: 0.83rem;\n  padding: 5px;\n  background: #e6e6e6;\n}\n.application-detail-modal .question p {\n  letter-spacing: 0.1em;\n  color: #212121;\n}\n.application-detail-modal .answer {\n  margin-bottom: 15px;\n  border: 1px solid #9c9c9c;\n  border-radius: 3px;\n  font-size: 0.83rem;\n  padding: 5px;\n  background: #e6e6e6;\n  background: #0CAA41;\n  color: white;\n}\n.application-detail-modal .answer p {\n  letter-spacing: 0.1em;\n  color: #212121;\n}\n.application-detail-modal .answer p {\n  color: white;\n  font-weight: bold;\n}\nbody {\n  font-family: 'Lato', sans-serif;\n  -webkit-font-smoothing: antialiased;\n  font-size: 16px;\n  background: #F0F0F0;\n}\nbody a {\n  cursor: pointer;\n  text-decoration: none;\n}\n.container {\n  padding: 10px 20px 10px 20px;\n}\n@media (max-width: 991px) {\n  .container {\n    padding: 10px 0 10px 0;\n  }\n}\n.dropdown {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n}\n.headings {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n}\nh1.title {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  text-transform: uppercase;\n  font-size: 1.4em;\n}\n.center {\n  justify-content: center;\n}\n.overlay {\n  display: block;\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 2000;\n  background-color: rgba(0, 0, 0, 0.5);\n}\n.modal {\n  display: block;\n  width: 60%;\n  height: 80%;\n  border-radius: 5px;\n  background: #fff;\n  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.75);\n  overflow: auto;\n  margin: auto;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 3000;\n}\n@media (max-width: 700px) {\n  .modal {\n    width: 90%;\n  }\n}\n";(require('lessify'))(css); module.exports = css;
-},{"lessify":54}],141:[function(require,module,exports){
+},{"../utils/fake-json":142}],141:[function(require,module,exports){
+var css = "* {\n  box-sizing: border-box;\n}\n.grid {\n  display: flex;\n  flex-flow: row wrap;\n  justify-content: inherit;\n  align-items: flex-start;\n  width: 100% !important;\n  padding: 0;\n}\n[class*='desktop-'],\n[class*='tablet-'],\n[class*='phone-'] {\n  margin: 0 0.5% 10px 0.5%;\n}\n.no-gutters [class*='desktop-'],\n.no-gutters [class*='tablet-'],\n.no-gutters [class*='phone-'] {\n  margin: 0 0 10px 0;\n}\n.relaxed-gutters [class*='desktop-'],\n.relaxed-gutters [class*='tablet-'],\n.relaxed-gutters [class*='phone-'] {\n  margin: 0 1% 10px 1%;\n}\n@media (min-width: 991px) {\n  .hidden-desktop {\n    display: none;\n  }\n  .desktop-one {\n    flex-basis: 7.33333333%;\n  }\n  .desktop-two {\n    flex-basis: 15.66666667%;\n  }\n  .desktop-three {\n    flex-basis: 24%;\n  }\n  .desktop-four {\n    flex-basis: 32.33333333%;\n  }\n  .desktop-five {\n    flex-basis: 40.66666667%;\n  }\n  .desktop-six {\n    flex-basis: 49%;\n  }\n  .desktop-seven {\n    flex-basis: 57.33333333%;\n  }\n  .desktop-eight {\n    flex-basis: 65.66666667%;\n  }\n  .desktop-nine {\n    flex-basis: 74%;\n  }\n  .desktop-ten {\n    flex-basis: 82.33333333%;\n  }\n  .desktop-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .desktop-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .desktop-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .desktop-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .desktop-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .desktop-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .desktop-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .desktop-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .desktop-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .desktop-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .desktop-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .desktop-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .desktop-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .desktop-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .desktop-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .desktop-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .desktop-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .desktop-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .desktop-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .desktop-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .desktop-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .desktop-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .desktop-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .desktop-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .desktop-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .desktop-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 991px) {\n  .hidden-tablet {\n    display: none;\n  }\n  .tablet-one {\n    flex-basis: 7.33333333%;\n  }\n  .tablet-two {\n    flex-basis: 15.66666667%;\n  }\n  .tablet-three {\n    flex-basis: 24%;\n  }\n  .tablet-four {\n    flex-basis: 32.33333333%;\n  }\n  .tablet-five {\n    flex-basis: 40.66666667%;\n  }\n  .tablet-six {\n    flex-basis: 49%;\n  }\n  .tablet-seven {\n    flex-basis: 57.33333333%;\n  }\n  .tablet-eight {\n    flex-basis: 65.66666667%;\n  }\n  .tablet-nine {\n    flex-basis: 74%;\n  }\n  .tablet-ten {\n    flex-basis: 82.33333333%;\n  }\n  .tablet-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .tablet-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .tablet-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .tablet-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .tablet-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .tablet-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .tablet-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .tablet-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .tablet-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .tablet-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .tablet-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .tablet-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .tablet-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .tablet-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .tablet-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .tablet-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .tablet-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .tablet-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .tablet-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .tablet-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .tablet-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .tablet-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .tablet-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .tablet-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .tablet-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .tablet-twelve {\n    flex-basis: 98%;\n  }\n}\n@media (max-width: 661px) {\n  .hidden-phone {\n    display: none;\n  }\n  .phone-one {\n    flex-basis: 7.33333333%;\n  }\n  .phone-two {\n    flex-basis: 15.66666667%;\n  }\n  .phone-three {\n    flex-basis: 24%;\n  }\n  .phone-four {\n    flex-basis: 32.33333333%;\n  }\n  .phone-five {\n    flex-basis: 40.66666667%;\n  }\n  .phone-six {\n    flex-basis: 49%;\n  }\n  .phone-seven {\n    flex-basis: 57.33333333%;\n  }\n  .phone-eight {\n    flex-basis: 65.66666667%;\n  }\n  .phone-nine {\n    flex-basis: 74%;\n  }\n  .phone-ten {\n    flex-basis: 82.33333333%;\n  }\n  .phone-eleven {\n    flex-basis: 90.66666667%;\n  }\n  .phone-twelve {\n    flex-basis: 99%;\n  }\n  .no-gutters .phone-one {\n    flex-basis: 8.33333333%;\n  }\n  .no-gutters .phone-two {\n    flex-basis: 16.66666667%;\n  }\n  .no-gutters .phone-three {\n    flex-basis: 25%;\n  }\n  .no-gutters .phone-four {\n    flex-basis: 33.33333333%;\n  }\n  .no-gutters .phone-five {\n    flex-basis: 41.66666667%;\n  }\n  .no-gutters .phone-six {\n    flex-basis: 50%;\n  }\n  .no-gutters .phone-seven {\n    flex-basis: 58.33333333%;\n  }\n  .no-gutters .phone-eight {\n    flex-basis: 66.66666667%;\n  }\n  .no-gutters .phone-nine {\n    flex-basis: 75%;\n  }\n  .no-gutters .phone-ten {\n    flex-basis: 83.33333333%;\n  }\n  .no-gutters .phone-eleven {\n    flex-basis: 91.66666667%;\n  }\n  .no-gutters .phone-twelve {\n    flex-basis: 100%;\n  }\n  .relaxed-gutters .phone-one {\n    flex-basis: 6.33333333%;\n  }\n  .relaxed-gutters .phone-two {\n    flex-basis: 14.66666667%;\n  }\n  .relaxed-gutters .phone-three {\n    flex-basis: 23%;\n  }\n  .relaxed-gutters .phone-four {\n    flex-basis: 31.33333333%;\n  }\n  .relaxed-gutters .phone-five {\n    flex-basis: 39.66666667%;\n  }\n  .relaxed-gutters .phone-six {\n    flex-basis: 48%;\n  }\n  .relaxed-gutters .phone-seven {\n    flex-basis: 56.33333333%;\n  }\n  .relaxed-gutters .phone-eight {\n    flex-basis: 64.66666667%;\n  }\n  .relaxed-gutters .phone-nine {\n    flex-basis: 73%;\n  }\n  .relaxed-gutters .phone-ten {\n    flex-basis: 81.33333333%;\n  }\n  .relaxed-gutters .phone-eleven {\n    flex-basis: 89.66666667%;\n  }\n  .relaxed-gutters .phone-twelve {\n    flex-basis: 98%;\n  }\n}\n.center {\n  justify-content: center !important;\n}\n.skeleton {\n  height: 25px;\n  width: 80%;\n  background-color: rgba(0, 0, 0, 0.15);\n  display: block;\n  margin: 27px auto;\n}\n.sky-blue {\n  background: #92AFD7;\n}\n.dark-blue {\n  background: #5A7684;\n}\n.nav {\n  position: fixed;\n  display: flex;\n  left: 0;\n  top: 0;\n  width: 100%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  background: #fff;\n  z-index: 1020;\n  padding: 10px 20px 10px 20px;\n}\n.nav .nav-item {\n  padding: 0 10px 0 10px;\n}\n.nav .nav-item .link {\n  line-height: 23px;\n  padding-bottom: 12px;\n  color: #404040;\n  font-size: 14px;\n}\n.nav .nav-item .link:hover {\n  color: #0CAA41;\n  border-bottom: 3px solid #0CAA41;\n}\n.nav .nav-item .active {\n  border-bottom: 3px solid #0CAA41;\n}\n.nav .logo {\n  color: #0CAA41;\n  font-size: 1.2rem;\n  font-weight: bold;\n  padding-right: 20px;\n}\n.listings {\n  margin-top: 80px;\n}\n.listings p,\n.listings h2,\n.listings h3,\n.listings h5 {\n  color: #404040;\n}\n.listings h2 {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  font-size: 1.2em;\n}\n.listings .card {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n}\n.listings .card-header {\n  margin-bottom: 16px;\n  border-bottom: 1px solid #DEDEDE;\n}\n.listings .card-header h3 {\n  font-size: 1rem;\n  line-height: 1;\n}\n.listings .job-application {\n  border-bottom: 1px solid #c2c2c2;\n  padding: 10px;\n}\n.listings .job-application:last-child {\n  border-bottom: none;\n}\n.listings .job-application a {\n  color: #1861bf;\n  font-weight: bold;\n}\n.listings .job-application p {\n  line-height: 0;\n}\n.listings .job-application .applied-at {\n  font-size: 0.9em;\n}\n@media (min-width: 991px) {\n  .listings .job-application .applied-at {\n    float: right;\n    margin-top: -41px;\n  }\n}\n@media (max-width: 991px) {\n  .listings .job-application .applied-at {\n    line-height: 1;\n  }\n}\n.listings .job-application .info {\n  font-size: 0.85em;\n  margin-right: 10px;\n}\n.listings .job-application .availability p,\n.listings .job-application .availability .day-tags {\n  font-size: 0.85em;\n  display: inline-block;\n  float: left;\n}\n.listings .job-application .availability .day-tags {\n  margin: 3px 0 0 5px;\n}\n.listings .job-application .availability .day-tags .tag {\n  font-size: 0.65em;\n  padding: 6px;\n  font-weight: bold;\n  margin: 0 5px 0 5px;\n  color: white;\n  background: #0CAA41;\n}\n.listings .job-application .controls {\n  font-size: 1.5rem;\n}\n@media (min-width: 991px) {\n  .listings .job-application .controls {\n    float: right;\n    margin-top: -31px;\n  }\n}\n.listings .job-application .controls i {\n  margin-right: 15px;\n  cursor: pointer;\n  color: #0CAA41;\n}\n.listings .job-application .controls i:last-child {\n  margin-right: 0px;\n}\n.listings .job-application .controls .remove-btn {\n  font-weight: 400;\n  font-size: 0.7em;\n}\n.listings .sidebar {\n  min-height: 400px;\n  padding: 10px 20px 10px 20px;\n  margin-bottom: 20px;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);\n  border-radius: 3px;\n  background: #fff;\n  min-height: 270px;\n}\n.listings .sidebar .facet {\n  margin: 10px 0 10px 0;\n}\n.listings .sidebar .facet p {\n  font-size: 0.8rem;\n  vertical-align: middle;\n  margin-top: 10px;\n}\n.listings .sidebar .facet .select-box {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n  font-size: 0.8rem;\n  padding: 8px;\n}\n.listings .sidebar .searh-tag {\n  padding: 10px;\n  margin-bottom: 10px;\n  font-size: 0.8rem;\n  border-radius: 3px;\n  background: #0CAA41;\n  color: white;\n  font-weight: bold;\n  cursor: pointer;\n}\n.listings .sidebar .searh-tag i {\n  float: right;\n  margin-top: -13px;\n}\n.listings .sidebar .sort-control i {\n  cursor: pointer;\n  margin-top: 9px;\n}\n.app-sort {\n  margin: 10px 0 10px 0;\n}\n.app-sort p {\n  font-size: 0.8rem;\n  vertical-align: middle;\n  margin-top: 10px;\n}\n.app-sort .select-box {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n  font-size: 0.8rem;\n  padding: 8px;\n}\n.application-detail-modal {\n  border-bottom: 1px solid #c2c2c2;\n  padding: 10px;\n  padding-top: 5px;\n}\n.application-detail-modal:last-child {\n  border-bottom: none;\n}\n.application-detail-modal a {\n  color: #1861bf;\n  font-weight: bold;\n}\n.application-detail-modal p {\n  line-height: 0;\n}\n.application-detail-modal .applied-at {\n  font-size: 0.9em;\n}\n@media (min-width: 991px) {\n  .application-detail-modal .applied-at {\n    float: right;\n    margin-top: -41px;\n  }\n}\n@media (max-width: 991px) {\n  .application-detail-modal .applied-at {\n    line-height: 1;\n  }\n}\n.application-detail-modal .info {\n  font-size: 0.85em;\n  margin-right: 10px;\n}\n.application-detail-modal .availability p,\n.application-detail-modal .availability .day-tags {\n  font-size: 0.85em;\n  display: inline-block;\n  float: left;\n}\n.application-detail-modal .availability .day-tags {\n  margin: 3px 0 0 5px;\n}\n.application-detail-modal .availability .day-tags .tag {\n  font-size: 0.65em;\n  padding: 6px;\n  font-weight: bold;\n  margin: 0 5px 0 5px;\n  color: white;\n  background: #0CAA41;\n}\n.application-detail-modal .controls {\n  font-size: 1.5rem;\n}\n@media (min-width: 991px) {\n  .application-detail-modal .controls {\n    float: right;\n    margin-top: -31px;\n  }\n}\n.application-detail-modal .controls i {\n  margin-right: 15px;\n  cursor: pointer;\n  color: #0CAA41;\n}\n.application-detail-modal .controls i:last-child {\n  margin-right: 0px;\n}\n.application-detail-modal .controls .remove-btn {\n  font-weight: 400;\n  font-size: 0.7em;\n}\n.application-detail-modal .question {\n  margin: 15px 0 15px 0;\n  border: 1px solid #9c9c9c;\n  border-radius: 3px;\n  font-size: 0.83rem;\n  padding: 5px;\n  background: #e6e6e6;\n}\n.application-detail-modal .question p {\n  letter-spacing: 0.1em;\n  color: #212121;\n}\nbody {\n  font-family: 'Lato', sans-serif;\n  -webkit-font-smoothing: antialiased;\n  font-size: 16px;\n  background: #F0F0F0;\n}\nbody a {\n  cursor: pointer;\n  text-decoration: none;\n}\n.container {\n  padding: 10px 20px 10px 20px;\n}\n@media (max-width: 991px) {\n  .container {\n    padding: 10px 0 10px 0;\n  }\n}\n.dropdown {\n  background-color: #fff;\n  color: #000;\n  padding: 10px;\n  font-size: 1em;\n  align-self: center;\n  width: 100%;\n}\n.headings {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n}\nh1.title {\n  letter-spacing: 6px;\n  font-weight: 500;\n  color: #0CAA41;\n  text-transform: uppercase;\n  font-size: 1.4em;\n}\n.center {\n  justify-content: center;\n}\n.overlay {\n  display: block;\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 2000;\n  background-color: rgba(0, 0, 0, 0.5);\n}\n.modal {\n  display: block;\n  width: 60%;\n  height: 80%;\n  border-radius: 5px;\n  background: #fff;\n  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.75);\n  overflow: auto;\n  margin: auto;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 3000;\n}\n@media (max-width: 700px) {\n  .modal {\n    width: 90%;\n  }\n}\n";(require('lessify'))(css); module.exports = css;
+},{"lessify":55}],142:[function(require,module,exports){
 'use strict';
 
 /**
@@ -42161,11 +42228,11 @@ function getJson() {
         }'
     };
 
-    var tpl = '[\n        {{#repeat 1000}}\n            {\n                "id": "{{@index}}",\n                "name": "{{firstName}} {{lastName}}",\n                "position": "{{position}}",\n                "applied": "{{date \'2015\' \'2017\' \'MM/DD/YYYY\'}}",\n                "experience": "{{int 1 20}}",\n                "availability": {{> availability}},\n                "questions": [\n                    {\n                        "text": "Are you authorized to work in the United States?",\n                        "answer": "{{answer}}"\n                    },\n                    {\n                        "text": "Have you ever been convicted of a felony?",\n                        "answer": "{{answer}}"\n                    }\n                ]\n            }\n        {{/repeat}}\n    ]';
+    var tpl = '[\n        {{#repeat 100}}\n            {\n                "id": "{{@index}}",\n                "name": "{{firstName}} {{lastName}}",\n                "position": "{{position}}",\n                "applied": "{{date \'2015\' \'2017\' \'MM/DD/YYYY\'}}",\n                "experience": "{{int 1 20}}",\n                "availability": {{> availability}},\n                "questions": [\n                    {\n                        "text": "Are you authorized to work in the United States?",\n                        "answer": "{{answer}}"\n                    },\n                    {\n                        "text": "Have you ever been convicted of a felony?",\n                        "answer": "{{answer}}"\n                    }\n                ]\n            }\n        {{/repeat}}\n    ]';
 
     return fakeJson.parse(tpl, { helpers: helpers, partials: partials });
 };
 
 module.exports = getJson;
 
-},{"dummy-json":18}]},{},[15]);
+},{"dummy-json":19}]},{},[16]);
