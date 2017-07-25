@@ -55,25 +55,26 @@
         </div>
     {{/}}
 
+    {{#if showAvailaBility()}}
+        <div class="grid facet">
+            <div class="desktop-four tablet-four mobile-four">
+                <p>Availability</p>
+            </div>
 
-    <div class="grid facet">
-        <div class="desktop-four tablet-four mobile-four">
-            <p>Availability</p>
+            <div class="desktop-eight tablet-eight mobile-eight">
+                <select class="select-box" on-change="searchApplications" data-facet="availability">
+                    <option value="">Select Day</option>
+                    <option value="M">Monday</option>
+                    <option value="T">Tuesday</option>
+                    <option value="W">Wednesday</option>
+                    <option value="Th">Thursday</option>
+                    <option value="F">Friday</option>
+                    <option value="S">Saturday</option>
+                    <option value="Su">Sunday</option>
+                </select>
+            </div>
         </div>
-
-        <div class="desktop-eight tablet-eight mobile-eight">
-            <select class="select-box" on-change="searchApplications" data-facet="availability">
-                <option value="">Select Day</option>
-                <option value="M">Monday</option>
-                <option value="T">Tuesday</option>
-                <option value="W">Wednesday</option>
-                <option value="Th">Thursday</option>
-                <option value="F">Friday</option>
-                <option value="S">Saturday</option>
-                <option value="Su">Sunday</option>
-            </select>
-        </div>
-    </div>
+    {{/if}}
 
 
     {{# facets.experience.length > 1}}

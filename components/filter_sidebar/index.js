@@ -6,16 +6,15 @@
 
 const Ractive = require('ractive');
 
-
 module.exports = Ractive.extend({
     isolated: true,
     template: require('./sidebar.html'),
-    // showAvailaBility() {
-    //     let { filterCriteria } = this.get();
-    //     console.log('see filterCriteria', filterCriteria);
-    //     if (typeof filterCriteria === 'undefined') return true;
-    //     return (typeof filterCriteria.find({ type: 'availability' } === 'undefined'));
-    // },
+    showAvailaBility() {
+        let { filterCriteria } = this.get();
+        if (typeof filterCriteria === 'undefined') return true;
+        let filtered = filterCriteria.find(criteria => criteria.type === 'availability');
+        return (!filtered || typeof filtered === 'undefined');
+    },
 
     onrender() {
 

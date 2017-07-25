@@ -820,43 +820,46 @@ var Ractive = require('ractive');
 module.exports = Ractive.extend({
     isolated: true,
     template: require('./sidebar.html'),
-    // showAvailaBility() {
-    //     let { filterCriteria } = this.get();
-    //     console.log('see filterCriteria', filterCriteria);
-    //     if (typeof filterCriteria === 'undefined') return true;
-    //     return (typeof filterCriteria.find({ type: 'availability' } === 'undefined'));
-    // },
+    showAvailaBility: function showAvailaBility() {
+        var _get = this.get(),
+            filterCriteria = _get.filterCriteria;
 
+        if (typeof filterCriteria === 'undefined') return true;
+        var filtered = filterCriteria.find(function (criteria) {
+            return criteria.type === 'availability';
+        });
+        return !filtered || typeof filtered === 'undefined';
+    },
     onrender: function onrender() {
 
         this.on({
             removeSearchTag: function removeSearchTag(e) {
                 var searhTagId = e.node.getAttribute('data-tag-index'),
-                    _get = this.get(),
-                    removeSearchTag = _get.removeSearchTag;
+                    _get2 = this.get(),
+                    removeSearchTag = _get2.removeSearchTag;
 
                 removeSearchTag(searhTagId);
             },
             searchApplications: function searchApplications(e) {
                 var facetType = e.node.getAttribute('data-facet'),
                     facetValue = e.node.value,
-                    _get2 = this.get(),
-                    searchOnFacet = _get2.searchOnFacet;
+                    _get3 = this.get(),
+                    searchOnFacet = _get3.searchOnFacet;
 
 
                 if (facetValue !== '') searchOnFacet({ facetValue: facetValue, facetType: facetType });
             },
             sortApplications: function sortApplications(e) {
-                var _get3 = this.get(),
-                    sortCriteria = _get3.sortCriteria,
-                    sortApplications = _get3.sortApplications;
+                var _get4 = this.get(),
+                    sortCriteria = _get4.sortCriteria,
+                    sortApplications = _get4.sortApplications;
 
                 sortApplications(sortCriteria);
             },
             chagneSortType: function chagneSortType(e) {
-                var _get4 = this.get(),
-                    sortCriteria = _get4.sortCriteria,
-                    sortApplications = _get4.sortApplications;
+                var _get5 = this.get(),
+                    sortCriteria = _get5.sortCriteria,
+                    sortApplications = _get5.sortApplications;
 
                 sortCriteria.type = e.node.getAttribute('data-type');
                 sortApplications(sortCriteria);
@@ -866,7 +869,7 @@ module.exports = Ractive.extend({
 });
 
 },{"./sidebar.html":13,"ractive":118}],13:[function(require,module,exports){
-module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Sort On</h3>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Sort</p>\n        </div>\n\n        <div class=\"desktop-seven tablet-seven mobile-seven\">\n            <select class=\"select-box\" on-change=\"sortApplications\" value=\"{{sortCriteria.on}}\">\n                <option value=\"appliedOn\">Applied On</option>\n                <option value=\"name\">Name</option>\n                <option value=\"experience\">Experience</option>\n                <option value=\"position\">Position</option>\n            </select>\n        </div>\n\n        <div class=\"desktop-one tablet-one mobile-one sort-control\">\n            {{# sortCriteria.type=='desc'}}\n                <i class=\"fa fa-arrow-up\" title=\"ascending\" data-type=\"asc\" on-click=\"chagneSortType\" aria-hidden=\"true\"></i>\n            {{/}}\n            {{# sortCriteria.type=='asc'}}\n                <i class=\"fa fa-arrow-down\" title=\"descending\" data-type=\"desc\" on-click=\"chagneSortType\" aria-hidden=\"true\"></i>\n            {{/}}\n        </div>\n    </div>\n\n    <div class=\"card-header\">\n        <h3>Filter On</h3>\n    </div>\n\n    {{#each filterCriteria}}\n        <div class=\"searh-tag\" on-click=\"removeSearchTag\" data-tag-index=\"{{@index}}\">\n            <div>{{type}}: {{value}}</div>\n            <i class=\"fa fa-times\"></i>\n        </div>\n    {{/each}}\n\n    {{# facets.positions.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Position</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"position\">\n                    <option value=\"\">Select Position</option>\n                    {{#each facets.positions}}\n                        <option value=\"{{this}}\">{{this}}</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Availability</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"availability\">\n                <option value=\"\">Select Day</option>\n                <option value=\"M\">Monday</option>\n                <option value=\"T\">Tuesday</option>\n                <option value=\"W\">Wednesday</option>\n                <option value=\"Th\">Thursday</option>\n                <option value=\"F\">Friday</option>\n                <option value=\"S\">Saturday</option>\n                <option value=\"Su\">Sunday</option>\n            </select>\n        </div>\n    </div>\n\n\n    {{# facets.experience.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Experience</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"experience\">\n                    <option value=\"\">Select Experience</option>\n                    {{#each facets.experience}}\n                        <option value=\"{{this}}\">{{this}} Years</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n</div>\n";
+module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Sort On</h3>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Sort</p>\n        </div>\n\n        <div class=\"desktop-seven tablet-seven mobile-seven\">\n            <select class=\"select-box\" on-change=\"sortApplications\" value=\"{{sortCriteria.on}}\">\n                <option value=\"appliedOn\">Applied On</option>\n                <option value=\"name\">Name</option>\n                <option value=\"experience\">Experience</option>\n                <option value=\"position\">Position</option>\n            </select>\n        </div>\n\n        <div class=\"desktop-one tablet-one mobile-one sort-control\">\n            {{# sortCriteria.type=='desc'}}\n                <i class=\"fa fa-arrow-up\" title=\"ascending\" data-type=\"asc\" on-click=\"chagneSortType\" aria-hidden=\"true\"></i>\n            {{/}}\n            {{# sortCriteria.type=='asc'}}\n                <i class=\"fa fa-arrow-down\" title=\"descending\" data-type=\"desc\" on-click=\"chagneSortType\" aria-hidden=\"true\"></i>\n            {{/}}\n        </div>\n    </div>\n\n    <div class=\"card-header\">\n        <h3>Filter On</h3>\n    </div>\n\n    {{#each filterCriteria}}\n        <div class=\"searh-tag\" on-click=\"removeSearchTag\" data-tag-index=\"{{@index}}\">\n            <div>{{type}}: {{value}}</div>\n            <i class=\"fa fa-times\"></i>\n        </div>\n    {{/each}}\n\n    {{# facets.positions.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Position</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"position\">\n                    <option value=\"\">Select Position</option>\n                    {{#each facets.positions}}\n                        <option value=\"{{this}}\">{{this}}</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n\n    {{#if showAvailaBility()}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Availability</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"availability\">\n                    <option value=\"\">Select Day</option>\n                    <option value=\"M\">Monday</option>\n                    <option value=\"T\">Tuesday</option>\n                    <option value=\"W\">Wednesday</option>\n                    <option value=\"Th\">Thursday</option>\n                    <option value=\"F\">Friday</option>\n                    <option value=\"S\">Saturday</option>\n                    <option value=\"Su\">Sunday</option>\n                </select>\n            </div>\n        </div>\n    {{/if}}\n\n\n    {{# facets.experience.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Experience</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"experience\">\n                    <option value=\"\">Select Experience</option>\n                    {{#each facets.experience}}\n                        <option value=\"{{this}}\">{{this}} Years</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n</div>\n";
 
 },{}],14:[function(require,module,exports){
 'use strict';
