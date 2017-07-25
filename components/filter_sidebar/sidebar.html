@@ -3,19 +3,23 @@
         <h3>Filter</h3>
     </div>
 
-    <div class="grid facet">
-        <div class="desktop-four tablet-four mobile-four">
-            <p>Position</p>
-        </div>
+    {{# facets.positions.length > 1}}
+        <div class="grid facet">
+            <div class="desktop-four tablet-four mobile-four">
+                <p>Position</p>
+            </div>
 
-        <div class="desktop-eight tablet-eight mobile-eight">
-            <select class="select-box">
-                <option value="">Software Developer</option>
-                <option value="">Engineer</option>
-                <option value="">Cook</option>
-            </select>
+            <div class="desktop-eight tablet-eight mobile-eight">
+                <select class="select-box" on-change="searchApplications" data-facet="position">
+                    <option value="">Select Position</option>
+                    {{#each facets.positions}}
+                        <option value="{{this}}">{{this}}</option>
+                    {{/each}}
+                </select>
+            </div>
         </div>
-    </div>
+    {{/}}
+
 
     <div class="grid facet">
         <div class="desktop-four tablet-four mobile-four">
@@ -24,13 +28,13 @@
 
         <div class="desktop-eight tablet-eight mobile-eight">
             <select class="select-box">
-                <option value="">Monday</option>
-                <option value="">Tuesday</option>
-                <option value="">Wednesday</option>
-                <option value="">Thursday</option>
-                <option value="">Friday</option>
-                <option value="">Saturday</option>
-                <option value="">Sunday</option>
+                <option value="M">Monday</option>
+                <option value="T">Tuesday</option>
+                <option value="W">Wednesday</option>
+                <option value="Th">Thursday</option>
+                <option value="F">Friday</option>
+                <option value="S">Saturday</option>
+                <option value="Su">Sunday</option>
             </select>
         </div>
     </div>

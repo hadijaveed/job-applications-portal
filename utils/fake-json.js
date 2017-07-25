@@ -38,7 +38,7 @@ function getJson() {
     };
 
     let tpl = `[
-        {{#repeat 3}}
+        {{#repeat 100}}
             {
                 "id": "{{@index}}",
                 "name": "{{firstName}} {{lastName}}",

@@ -20,8 +20,8 @@ const formatListingData = function() {
         mapBookmarkFlags(applications, bookmarks) {
             return applications
                     .map(application => {
-                        if (bookmarks.indexOf(application.id) !== -1) application.bookmarked = true;
-                        else application.bookmarked = false;
+                        if (bookmarks.indexOf(application.id) !== -1) application.isBookmarked = true;
+                        else application.isBookmarked = false;
                         return application;
                     });
         },
@@ -29,24 +29,24 @@ const formatListingData = function() {
         mapFavouriteFlags(applications, favourites) {
             return applications
                     .map(application => {
-                        if (favourites.indexOf(application.id) !== -1) application.bookmarked = true;
-                        else application.bookmarked = false;
+                        if (favourites.indexOf(application.id) !== -1) application.isInFavourites = true;
+                        else application.isInFavourites = false;
                         return application;
                     });
         },
 
-        mapAllData(applications, favourites, bookmarks) {
+        mapAllData(applications, bookmarks, favourites) {
             return applications
                     .map(application => {
                         application.availableOnDays =
                             Object.keys(application.availability)
                                 .filter(key => application.availability[key] !== 0);
 
-                        if (bookmarks.indexOf(application.id) !== -1) application.bookmarked = true;
-                        else application.bookmarked = false;
+                        if (bookmarks.indexOf(application.id) !== -1) application.isBookmarked = true;
+                        else application.isBookmarked = false;
 
-                        if (favourites.indexOf(application.id) !== -1) application.bookmarked = true;
-                        else application.bookmarked = false;
+                        if (favourites.indexOf(application.id) !== -1) application.isInFavourites = true;
+                        else application.isInFavourites = false;
 
                         return application;
                     });

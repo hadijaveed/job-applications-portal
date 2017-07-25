@@ -43,22 +43,55 @@ function RenderCtrl() {
     let self = this;
 
     // get all applications on render
-    ListingFactory
-        .getAllApplications()
-        .then(data => {
-            self.set('applications', ListingDataService.mapAvailabilityDays(data));
+    let promises = [
+        ListingFactory.getApplications([]),
+        AdminService.getBookmarks(),
+        AdminService.getFavourites()
+    ];
+
+    Promise.all(promises)
+        .then(replies => {
+            let searchData, bookmarks, favourites;
+            [searchData, bookmarks, favourites] = replies;
+            console.log('see searchData ', searchData);
+            self.set({
+                applications: ListingDataService.mapAvailabilityDays(searchData.results),
+                bookmarks,
+                favourites,
+                filterCriteria: [],
+                facets: searchData.facets
+            });
         })
         .catch(err => {
-            console.log('see error on render ', err);
+            console.error('Error while fetching data ', err);
         });
 
     self.set({
         methods: {
 
+            searchOnFacet({ facetType, facetValue }) {
+                let { filterCriteria } = self.get();
+                let criteriaWithType = filterCriteria.find(criteria => (criteria.type === facetType && criteria.value === facetValue));
+                if (!criteriaWithType || typeof criteriaWithType === 'undefined') {
+                    filterCriteria.push({ type: facetType, value: facetValue });
+                    ListingFactory.getApplications(filterCriteria)
+                        .then(searchData => {
+                            self.set({
+                                applications: ListingDataService.mapAvailabilityDays(searchData.results),
+                                facets: searchData.facets,
+                                filterCriteria
+                            });
+                        })
+                        .catch(err => {
+                            console.log('something went wrong ', err);
+                        });
+                }
+            },
+
             bookmarkApplication(id) {
                 AdminService.setBookmark(id)
-                    .then(bookamrks => {
-                        console.log('see bookmarks ', bookamrks);
+                    .then(bookmarks => {
+                        self.set('bookmarks', bookmarks);
                     })
                     .catch(err => {
                         console.error('Something went wrong ', err);
@@ -68,7 +101,27 @@ function RenderCtrl() {
             favouriteApplication(id) {
                 AdminService.setFavourite(id)
                     .then(favourites => {
-                        console.log('see favourites ', favourites);
+                        self.set('favourites', favourites);
+                    })
+                    .catch(err => {
+                        console.error('Something went wrong ', err);
+                    });
+            },
+
+            removeAppFromBookmarks(id) {
+                AdminService.removeBookmark(id)
+                    .then(bookmarks => {
+                        self.set('bookmarks', bookmarks);
+                    })
+                    .catch(err => {
+                        console.error('Something went wrong ', err);
+                    });
+            },
+
+            removeAppFromFavourites(id) {
+                AdminService.removeFavourite(id)
+                    .then(favourites => {
+                        self.set('favourites', favourites);
                     })
                     .catch(err => {
                         console.error('Something went wrong ', err);

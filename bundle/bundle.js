@@ -464,7 +464,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
-module.exports = "<navBar />\n<div class=\"container listings\">\n    <div class=\"grid relaxed-gutters\">\n        <div class=\"desktop-three hidden-tablet hidden-phone\">\n            <sidebar />\n        </div>\n\n        <div class=\"desktop-nine tablet-twelve phone-twelve\">\n            <listings\n                applications=\"{{applications}}\"\n                applicationMethods=\"{{methods}}\"\n            />\n        </div>\n    </div>\n</div>\n";
+module.exports = "<navBar />\n<div class=\"container listings\">\n    <div class=\"grid relaxed-gutters\">\n        <div class=\"desktop-three hidden-tablet hidden-phone\">\n            <sidebar\n                facets=\"{{facets}}\"\n                searchOnFacet=\"{{methods.searchOnFacet}}\"\n            />\n        </div>\n\n        <div class=\"desktop-nine tablet-twelve phone-twelve\">\n            <listings\n                applications=\"{{applications}}\"\n                applicationMethods=\"{{methods}}\"\n                bookmarks=\"{{bookmarks}}\"\n                favourites=\"{{favourites}}\"\n            />\n        </div>\n    </div>\n</div>\n";
 
 },{}],7:[function(require,module,exports){
 'use strict';
@@ -481,8 +481,17 @@ module.exports = Ractive.extend({
     isolated: true,
     template: require('./listings.html'),
 
-    bookmarkApplication: function bookmarkApplication(id) {
-        console.log('bookmark application called '.id);
+    isInBookmarks: function isInBookmarks(id) {
+        var _get = this.get(),
+            bookmarks = _get.bookmarks;
+
+        return bookmarks.indexOf(id) !== -1;
+    },
+    isInFavourites: function isInFavourites(id) {
+        var _get2 = this.get(),
+            favourites = _get2.favourites;
+
+        return favourites.indexOf(id) !== -1;
     },
     onrender: function onrender() {
         var self = this;
@@ -505,6 +514,14 @@ module.exports = Ractive.extend({
                         applicationMethods.bookmarkApplication(id);
                         break;
 
+                    case 'removeFromBookmarks':
+                        applicationMethods.removeAppFromBookmarks(id);
+                        break;
+
+                    case 'removeFromFavourites':
+                        applicationMethods.removeAppFromFavourites(id);
+                        break;
+
                     default:
                         console.log('do nothing here ');
                 }
@@ -514,7 +531,7 @@ module.exports = Ractive.extend({
 });
 
 },{"./listings.html":8,"ractive":115}],8:[function(require,module,exports){
-module.exports = "<div class=\"card\">\n    <div class=\"card-header\">\n        <h3>Applications</h3>\n    </div>\n\n    {{#each applications}}\n        <div class=\"job-application\">\n            <a role=\"button\">{{position}}</a>\n            <p>{{name}}</p>\n            <p class=\"applied-at\">\n                <strong>Applied: </strong>{{applied}} ago\n            </p>\n\n            <div class=\"grid no-gutters\">\n                <p class=\"info\">\n                    <strong>Experience: </strong> {{experience}} years\n                </p>\n\n                <div class=\"availability\">\n                    <p><strong>Availability :</strong></p>\n                    <div class=\"day-tags\">\n                        <div class=\"grid\">\n                            {{#each availableOnDays}}\n                                <div class=\"tag\">{{this}}</div>\n                            {{/each}}\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"controls\">\n                <div class=\"grid\">\n                    <i\n                        class=\"fa fa-heart-o\"\n                        title=\"Favourite\"\n                        data-id=\"{{id}}\"\n                        data-action=\"favouriteApllication\"\n                        on-click=\"applicationEvent\"\n                    >\n                    </i>\n                    <i\n                        class=\"fa fa-bookmark-o\"\n                        title=\"Favourite\"\n                        data-action=\"bookamrkApplication\"\n                        data-id=\"{{id}}\"\n                        on-click=\"applicationEvent\"\n                    >\n                    </i>\n                </div>\n            </div>\n        </div>\n    {{/each}}\n\n</div>\n";
+module.exports = "<div class=\"card\">\n    <div class=\"card-header\">\n        <h3>Applications</h3>\n    </div>\n\n    {{#each applications}}\n        <div class=\"job-application\">\n            <a role=\"button\">{{position}}</a>\n            <p>{{name}}</p>\n            <p class=\"applied-at\">\n                <strong>Applied: </strong>{{applied}} ago\n            </p>\n\n            <div class=\"grid no-gutters\">\n                <p class=\"info\">\n                    <strong>Experience: </strong> {{experience}} years\n                </p>\n\n                <div class=\"availability\">\n                    <p><strong>Availability :</strong></p>\n                    <div class=\"day-tags\">\n                        <div class=\"grid\">\n                            {{#each availableOnDays}}\n                                <div class=\"tag\">{{this}}</div>\n                            {{/each}}\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"controls\">\n                <div class=\"grid\">\n                    {{#if isInFavourites(id)}}\n                        <i\n                            class=\"fa fa-heart\"\n                            title=\"Favourite\"\n                            data-id=\"{{id}}\"\n                            data-action=\"removeFromFavourites\"\n                            on-click=\"applicationEvent\"\n                        >\n                        </i>\n                        {{else}}\n                        <i\n                            class=\"fa fa-heart-o\"\n                            title=\"Favourite\"\n                            data-id=\"{{id}}\"\n                            data-action=\"favouriteApllication\"\n                            on-click=\"applicationEvent\"\n                        >\n                        </i>\n                    {{/if}}\n                    {{#if isInBookmarks(id)}}\n                        <i\n                            class=\"fa fa-bookmark\"\n                            title=\"Bookmark\"\n                            data-action=\"removeFromBookmarks\"\n                            data-id=\"{{id}}\"\n                            on-click=\"applicationEvent\"\n                        >\n                        </i>\n                        {{else}}\n                        <i\n                            class=\"fa fa-bookmark-o\"\n                            title=\"Bookmark\"\n                            data-action=\"bookamrkApplication\"\n                            data-id=\"{{id}}\"\n                            on-click=\"applicationEvent\"\n                        >\n                        </i>\n                    {{/if}}\n                </div>\n            </div>\n        </div>\n    {{/each}}\n\n</div>\n";
 
 },{}],9:[function(require,module,exports){
 'use strict';
@@ -534,13 +551,22 @@ module.exports = Ractive.extend({
     onrender: function onrender() {
 
         this.on({
-            changeLink: function changeLink(e) {}
+            changeLink: function changeLink(e) {},
+            searchApplications: function searchApplications(e) {
+                var facetType = e.node.getAttribute('data-facet'),
+                    facetValue = e.node.value,
+                    _get = this.get(),
+                    searchOnFacet = _get.searchOnFacet;
+
+
+                if (facetValue !== '') searchOnFacet({ facetValue: facetValue, facetType: facetType });
+            }
         });
     }
 });
 
 },{"./sidebar.html":10,"ractive":115}],10:[function(require,module,exports){
-module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Filter</h3>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Position</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">Software Developer</option>\n                <option value=\"\">Engineer</option>\n                <option value=\"\">Cook</option>\n            </select>\n        </div>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Availability</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">Monday</option>\n                <option value=\"\">Tuesday</option>\n                <option value=\"\">Wednesday</option>\n                <option value=\"\">Thursday</option>\n                <option value=\"\">Friday</option>\n                <option value=\"\">Saturday</option>\n                <option value=\"\">Sunday</option>\n            </select>\n        </div>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Experience</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">1 Year</option>\n                <option value=\"\">2 Years</option>\n                <option value=\"\">3 Years</option>\n                <option value=\"\">4 Years</option>\n                <option value=\"\">5 Years</option>\n            </select>\n        </div>\n    </div>\n</div>\n";
+module.exports = "<div class=\"sidebar\">\n    <div class=\"card-header\">\n        <h3>Filter</h3>\n    </div>\n\n    {{# facets.positions.length > 1}}\n        <div class=\"grid facet\">\n            <div class=\"desktop-four tablet-four mobile-four\">\n                <p>Position</p>\n            </div>\n\n            <div class=\"desktop-eight tablet-eight mobile-eight\">\n                <select class=\"select-box\" on-change=\"searchApplications\" data-facet=\"position\">\n                    <option value=\"\">Select Position</option>\n                    {{#each facets.positions}}\n                        <option value=\"{{this}}\">{{this}}</option>\n                    {{/each}}\n                </select>\n            </div>\n        </div>\n    {{/}}\n\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Availability</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"M\">Monday</option>\n                <option value=\"T\">Tuesday</option>\n                <option value=\"W\">Wednesday</option>\n                <option value=\"Th\">Thursday</option>\n                <option value=\"F\">Friday</option>\n                <option value=\"S\">Saturday</option>\n                <option value=\"Su\">Sunday</option>\n            </select>\n        </div>\n    </div>\n\n    <div class=\"grid facet\">\n        <div class=\"desktop-four tablet-four mobile-four\">\n            <p>Experience</p>\n        </div>\n\n        <div class=\"desktop-eight tablet-eight mobile-eight\">\n            <select class=\"select-box\">\n                <option value=\"\">1 Year</option>\n                <option value=\"\">2 Years</option>\n                <option value=\"\">3 Years</option>\n                <option value=\"\">4 Years</option>\n                <option value=\"\">5 Years</option>\n            </select>\n        </div>\n    </div>\n</div>\n";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -574,6 +600,8 @@ module.exports = "<div class=\"nav\">\n    <div class=\"nav-item\">\n        <a 
 
 },{}],13:[function(require,module,exports){
 'use strict';
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var $ = require('jquery'),
     Ractive = require('ractive'),
@@ -616,24 +644,80 @@ function RenderCtrl() {
     var self = this;
 
     // get all applications on render
-    ListingFactory.getAllApplications().then(function (data) {
-        self.set('applications', ListingDataService.mapAvailabilityDays(data));
+    var promises = [ListingFactory.getApplications([]), AdminService.getBookmarks(), AdminService.getFavourites()];
+
+    Promise.all(promises).then(function (replies) {
+        var searchData = void 0,
+            bookmarks = void 0,
+            favourites = void 0;
+
+        var _replies = _slicedToArray(replies, 3);
+
+        searchData = _replies[0];
+        bookmarks = _replies[1];
+        favourites = _replies[2];
+
+        console.log('see searchData ', searchData);
+        self.set({
+            applications: ListingDataService.mapAvailabilityDays(searchData.results),
+            bookmarks: bookmarks,
+            favourites: favourites,
+            filterCriteria: [],
+            facets: searchData.facets
+        });
     }).catch(function (err) {
-        console.log('see error on render ', err);
+        console.error('Error while fetching data ', err);
     });
 
     self.set({
         methods: {
+            searchOnFacet: function searchOnFacet(_ref) {
+                var facetType = _ref.facetType,
+                    facetValue = _ref.facetValue;
+
+                var _self$get = self.get(),
+                    filterCriteria = _self$get.filterCriteria;
+
+                var criteriaWithType = filterCriteria.find(function (criteria) {
+                    return criteria.type === facetType && criteria.value === facetValue;
+                });
+                if (!criteriaWithType || typeof criteriaWithType === 'undefined') {
+                    filterCriteria.push({ type: facetType, value: facetValue });
+                    ListingFactory.getApplications(filterCriteria).then(function (searchData) {
+                        self.set({
+                            applications: ListingDataService.mapAvailabilityDays(searchData.results),
+                            facets: searchData.facets,
+                            filterCriteria: filterCriteria
+                        });
+                    }).catch(function (err) {
+                        console.log('something went wrong ', err);
+                    });
+                }
+            },
             bookmarkApplication: function bookmarkApplication(id) {
-                AdminService.setBookmark(id).then(function (bookamrks) {
-                    console.log('see bookmarks ', bookamrks);
+                AdminService.setBookmark(id).then(function (bookmarks) {
+                    self.set('bookmarks', bookmarks);
                 }).catch(function (err) {
                     console.error('Something went wrong ', err);
                 });
             },
             favouriteApplication: function favouriteApplication(id) {
                 AdminService.setFavourite(id).then(function (favourites) {
-                    console.log('see favourites ', favourites);
+                    self.set('favourites', favourites);
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            removeAppFromBookmarks: function removeAppFromBookmarks(id) {
+                AdminService.removeBookmark(id).then(function (bookmarks) {
+                    self.set('bookmarks', bookmarks);
+                }).catch(function (err) {
+                    console.error('Something went wrong ', err);
+                });
+            },
+            removeAppFromFavourites: function removeAppFromFavourites(id) {
+                AdminService.removeFavourite(id).then(function (favourites) {
+                    self.set('favourites', favourites);
                 }).catch(function (err) {
                     console.error('Something went wrong ', err);
                 });
@@ -41742,25 +41826,25 @@ var formatListingData = function formatListingData() {
         },
         mapBookmarkFlags: function mapBookmarkFlags(applications, bookmarks) {
             return applications.map(function (application) {
-                if (bookmarks.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+                if (bookmarks.indexOf(application.id) !== -1) application.isBookmarked = true;else application.isBookmarked = false;
                 return application;
             });
         },
         mapFavouriteFlags: function mapFavouriteFlags(applications, favourites) {
             return applications.map(function (application) {
-                if (favourites.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+                if (favourites.indexOf(application.id) !== -1) application.isInFavourites = true;else application.isInFavourites = false;
                 return application;
             });
         },
-        mapAllData: function mapAllData(applications, favourites, bookmarks) {
+        mapAllData: function mapAllData(applications, bookmarks, favourites) {
             return applications.map(function (application) {
                 application.availableOnDays = Object.keys(application.availability).filter(function (key) {
                     return application.availability[key] !== 0;
                 });
 
-                if (bookmarks.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+                if (bookmarks.indexOf(application.id) !== -1) application.isBookmarked = true;else application.isBookmarked = false;
 
-                if (favourites.indexOf(application.id) !== -1) application.bookmarked = true;else application.bookmarked = false;
+                if (favourites.indexOf(application.id) !== -1) application.isInFavourites = true;else application.isInFavourites = false;
 
                 return application;
             });
@@ -41782,8 +41866,6 @@ module.exports = formatListingData;
 var getFakeJson = require('../utils/fake-json'),
     appData = JSON.parse(getFakeJson());
 
-console.log('see json ', JSON.stringify(appData, null, 2));
-
 var errorService = function errorService() {
     var errorMappings = {
         4000: {
@@ -41793,7 +41875,7 @@ var errorService = function errorService() {
 
         4001: {
             code: 4001,
-            message: 'Application filter method requires @param criteria as a {string}'
+            message: 'Application filter method requires @param filters as a {Array}'
         },
 
         4002: {
@@ -41821,23 +41903,63 @@ var errorService = function errorService() {
  */
 
 var jobPortalFactory = function jobPortalFactory() {
-    var sendErrorService = errorService().sendError;
+    var sendErrorService = errorService().sendError,
+        results = appData;
+
+    var utils = {
+        onlyUnique: function onlyUnique(value, index, instance) {
+            return instance.indexOf(value) === index;
+        },
+        sortText: function sortText(a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        },
+        sortIntegers: function sortIntegers(a, b) {
+            return parseInt(a) - parseInt(b);
+        }
+    };
+
     return {
-        getAllApplications: function getAllApplications() {
-            return new Promise(function (resolve, reject) {
-                setTimeout(function () {
-                    resolve(appData);
-                }, 200);
-            });
+        getSearchFacets: function getSearchFacets(searchResults) {
+            return {
+                positions: searchResults.map(function (result) {
+                    return result.position;
+                }).filter(utils.onlyUnique).sort(utils.sortText),
+                experience: searchResults.map(function (result) {
+                    return result.experience;
+                }).filter(utils.onlyUnique).sort(utils.sortIntegers)
+            };
         },
-        filterApplications: function filterApplications(criteria) {
+        getApplications: function getApplications(filters) {
+            var self = this;
             return new Promise(function (resolve, reject) {
-                if (typeof criteria !== 'string') return reject({ error: sendErrorService(4001) });
-            });
-        },
-        sortApplications: function sortApplications(criteria) {
-            return new Promise(function (resolve, reject) {
-                if (typeof criteria !== 'string') return reject({ error: sendErrorService(4001) });
+
+                if (!Array.isArray(filters)) return reject({ error: sendErrorService(4001) });
+
+                var filterCriteria = filters.reduce(function (acc, curr) {
+                    if (curr.type === 'position') acc.position = curr.value;
+                    if (curr.type === 'experience') acc.experience = curr.value;
+                    if (curr.type === 'availability') acc.availability = curr.value;
+                    return acc;
+                }, {});
+
+                function filterOnFacet(facet) {
+                    return function (result) {
+                        if (facet === 'availability' && filterCriteria.availability) {
+                            return result.availability.hasOwnProperty(filterCriteria.availability) && result.availability[filterCriteria.availability] !== 0;
+                        } else if (filterCriteria[facet]) {
+                            return result[facet] === filterCriteria[facet];
+                        } else {
+                            return result;
+                        }
+                    };
+                }
+
+                var filteredResults = results.filter(filterOnFacet('position')).filter(filterOnFacet('experience')).filter(filterOnFacet('availability'));
+
+                resolve({
+                    results: filteredResults,
+                    facets: self.getSearchFacets(filteredResults)
+                });
             });
         },
         getApplicationDetail: function getApplicationDetail(id) {
@@ -41886,7 +42008,7 @@ function getJson() {
         }'
     };
 
-    var tpl = '[\n        {{#repeat 3}}\n            {\n                "id": "{{@index}}",\n                "name": "{{firstName}} {{lastName}}",\n                "position": "{{position}}",\n                "applied": "{{date \'2015\' \'2017\' \'MM/DD/YYYY\'}}",\n                "experience": "{{int 1 20}}",\n                "availability": {{> availability}},\n                "questions": [\n                    {\n                        "text": "Are you authorized to work in the United States?",\n                        "answer": "{{answer}}"\n                    },\n                    {\n                        "text": "Have you ever been convicted of a felony?",\n                        "answer": "{{answer}}"\n                    }\n                ]\n            }\n        {{/repeat}}\n    ]';
+    var tpl = '[\n        {{#repeat 100}}\n            {\n                "id": "{{@index}}",\n                "name": "{{firstName}} {{lastName}}",\n                "position": "{{position}}",\n                "applied": "{{date \'2015\' \'2017\' \'MM/DD/YYYY\'}}",\n                "experience": "{{int 1 20}}",\n                "availability": {{> availability}},\n                "questions": [\n                    {\n                        "text": "Are you authorized to work in the United States?",\n                        "answer": "{{answer}}"\n                    },\n                    {\n                        "text": "Have you ever been convicted of a felony?",\n                        "answer": "{{answer}}"\n                    }\n                ]\n            }\n        {{/repeat}}\n    ]';
 
     return fakeJson.parse(tpl, { helpers: helpers, partials: partials });
 };
