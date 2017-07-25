@@ -1,6 +1,6 @@
 ### Build Project
 ```
-  npm build
+  npm run build
 ```
 
 ### Run Project
