@@ -4,13 +4,23 @@
  *
  */
 
-const Ractive = require('ractive'),
-    ListingFactory = require('./services/listings')(),
-    ListingDataService = require('./services/data-service')(),
-    AdminService = require('./services/admin-services')();
+import Ractive from 'ractive';
+import ListingService from './services/listings';
+import ListingDataFormat from './services/data-service';
+import AdminFactory from './services/admin-services';
+
+const ListingFactory = ListingService(),
+    ListingDataService = ListingDataFormat(),
+    AdminService = AdminFactory();
 
 // style main file
-require('./styles/index.less');
+import './styles/index.less';
+
+// components includes
+import navBar from './components/nav';
+import sidebar from './components/filter_sidebar';
+import listings from './components/application_listings';
+import detailModal from './components/application-detail';
 
 
 const jobComponent = new Ractive({
@@ -24,10 +34,10 @@ const jobComponent = new Ractive({
         }
     },
     components: {
-        navBar: require('./components/nav'),
-        sidebar: require('./components/filter_sidebar'),
-        listings: require('./components/application_listings'),
-        detailModal: require('./components/application-detail')
+        navBar,
+        sidebar,
+        listings,
+        detailModal
     },
 
     setSearchData(filterCriteria) {
@@ -186,3 +196,5 @@ function RenderCtrl() {
     });
 
 }
+
+export default jobComponent;

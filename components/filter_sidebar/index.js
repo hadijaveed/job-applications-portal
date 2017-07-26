@@ -4,9 +4,9 @@
  *
  */
 
-const Ractive = require('ractive');
+import Ractive from 'ractive';
 
-module.exports = Ractive.extend({
+const sideBarComponent = Ractive.extend({
     isolated: true,
     template: require('./sidebar.html'),
     showAvailaBility() {
@@ -47,3 +47,5 @@ module.exports = Ractive.extend({
 
     }
 });
+
+export default sideBarComponent;

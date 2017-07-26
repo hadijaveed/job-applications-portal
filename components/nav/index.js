@@ -4,10 +4,10 @@
  *
  */
 
-const Ractive = require('ractive');
+import Ractive from 'ractive';
 
 
-module.exports = Ractive.extend({
+const navComponent = Ractive.extend({
     isolated: true,
     template: require('./tpl.html'),
     data() {
@@ -25,3 +25,6 @@ module.exports = Ractive.extend({
         });
     }
 });
+
+
+export default navComponent;

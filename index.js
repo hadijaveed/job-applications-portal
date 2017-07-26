@@ -1,12 +1,20 @@
 
 // app main component require
-require('./app');
+import './app';
 
-let stickyElement = document.querySelector('[data-sticky-element]');
-stickyElement.style.position = 'fixed';
-stickyElement.style.width = stickyElement.parentNode.offsetWidth + 'px';
+
+window.addEventListener('scroll', () => {
+    let stickyElement = document.querySelector('[data-sticky-element]');
+    if (stickyElement) {
+        stickyElement.style.position = 'fixed';
+        stickyElement.style.width = stickyElement.parentNode.offsetWidth + 'px';
+    }
+});
 
 window.addEventListener('resize', () => {
-    stickyElement.style.position = 'fixed';
-    stickyElement.style.width = stickyElement.parentNode.offsetWidth + 'px';
+    let stickyElement = document.querySelector('[data-sticky-element]');
+    if (stickyElement) {
+        stickyElement.style.position = 'fixed';
+        stickyElement.style.width = stickyElement.parentNode.offsetWidth + 'px';
+    }
 });

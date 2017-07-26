@@ -4,10 +4,10 @@
  *
  */
 
-const Ractive = require('ractive');
+import Ractive from 'ractive';
 
 
-module.exports = Ractive.extend({
+const listingComponent = Ractive.extend({
     isolated: true,
     template: require('./listings.html'),
 
@@ -64,3 +64,5 @@ module.exports = Ractive.extend({
         });
     }
 });
+
+export default listingComponent;

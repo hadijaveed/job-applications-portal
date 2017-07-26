@@ -4,10 +4,10 @@
  *
  */
 
-const Ractive = require('ractive');
+import Ractive from 'ractive';
 
 
-module.exports = Ractive.extend({
+const appDetailComponent = Ractive.extend({
     isolated: true,
     template: require('./detail_modal.html'),
     isInBookmarks(id) {
@@ -19,7 +19,7 @@ module.exports = Ractive.extend({
         let { favourites } = this.get();
         return (favourites.indexOf(id) !== -1);
     },
-    
+
     onrender() {
         let self = this;
         self.on({
@@ -58,3 +58,5 @@ module.exports = Ractive.extend({
         });
     }
 });
+
+export default appDetailComponent;
